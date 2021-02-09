@@ -95,28 +95,13 @@ class KytosGraph:
 
     def update_links(self, links):
         """Update all links inside the graph."""
-        keys = []
         for link in links.values():
             if link.is_active():
                 self.graph.add_edge(link.endpoint_a.id, link.endpoint_b.id)
                 for key, value in link.metadata.items():
-                    keys.append(key) if key not in keys else keys
                     endpoint_a = link.endpoint_a.id
                     endpoint_b = link.endpoint_b.id
                     self.graph[endpoint_a][endpoint_b][key] = value
-
-        # self._set_default_metadata(keys)  # It creates errors during the path construction
-
-    # def _set_default_metadata(self, keys):
-    #     """Set metadata to all links.
-    #
-    #     Set the value to zero for inexistent metadata in a link to make those
-    #     irrelevant in pathfinding.
-    #     """
-    #     for key in keys:
-    #         for endpoint_a, endpoint_b in self.graph.edges:
-    #             if key not in self.graph[endpoint_a][endpoint_b]:
-    #                 self.graph[endpoint_a][endpoint_b][key] = 0
 
     def get_link_metadata(self, endpoint_a, endpoint_b):
         """Return the metadata of a link."""
@@ -158,13 +143,17 @@ class KytosGraph:
                                                    **base))
         length = len(flexible)
         if minimum_hits is None:
-            minimum_hits = length
+            # minimum_hits = length
+            minimum_hits = 0
         minimum_hits = min(length, max(0, minimum_hits))
+        # minimum_hits = max(minimum_hits, 0)
         results = []
         paths = []
-        i = 0
-        while paths == [] and i in range(0, minimum_hits + 1):
-            for combo in combinations(flexible.items(), length - i):
+        # i = minimum_hits
+        # i = 0
+        # while paths == [] and i <= length:
+        for i in range(length, minimum_hits - 1, -1):
+            for combo in combinations(flexible.items(), i):
                 additional = dict(combo)
                 paths = self._constrained_shortest_paths(
                     source, destination,
@@ -173,7 +162,9 @@ class KytosGraph:
                 if paths:
                     results.append(
                         {"paths": paths, "metrics": {**base, **additional}})
-            i = i + 1
+            # i = i + 1
+            if paths:
+                break
         return results
 
     def _constrained_shortest_paths(self, source, destination, links):
