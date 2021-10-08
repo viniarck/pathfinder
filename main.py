@@ -3,11 +3,8 @@
 from flask import jsonify, request
 from kytos.core import KytosNApp, log, rest
 from kytos.core.helpers import listen_to
-import traceback
 # pylint: disable=import-error
-# from napps.kytos.pathfinder.graph import KytosGraph
-from graph import KytosGraph
-# pylint: enable=import-error
+from napps.kytos.pathfinder.graph import KytosGraph
 
 
 class Main(KytosNApp):
@@ -90,28 +87,6 @@ class Main(KytosNApp):
 
         paths = self._filter_paths(paths, desired, undesired)
         return jsonify({'paths': paths})
-
-    @rest('v2/path-exact-delay', methods=['POST'])
-    def path_exact_delay(self):
-        """
-        Calculate the path with the exact delay
-        between the source and destination.
-        """
-        data = request.get_json()
-
-        source = data.get('source')
-        destination = data.get('destination')
-        delay = data.get('delay')
-
-        graph_data = {}
-        try:
-            result = self.graph.exact_path(delay, source, destination)
-        except Exception:
-            return jsonify({"exception": str(traceback.format_exc())})
-            
-        graph_data["Exact Path Result"] = result
-
-        return jsonify(graph_data)
 
     @rest('v2/best-constrained-paths', methods=['POST'])
     def shortest_constrained_path(self):

@@ -10,11 +10,6 @@ try:
 except ImportError:
     PACKAGE = 'networkx>=2.2'
     log.error(f"Package {PACKAGE} not found. Please 'pip install {PACKAGE}'")
-try:
-    from exactdelaypathfinder.core import ExactDelayPathfinder
-except ImportError:
-    PACKAGE = 'exactdelaypathfinder>=0.1.0'
-    log.error(f"Package {PACKAGE} not found. Please 'pip install {PACKAGE}'")
 
 
 class Filter:
@@ -123,16 +118,6 @@ class KytosGraph:
         except (NodeNotFound, NetworkXNoPath):
             return []
         return paths
-
-    def exact_path(self, total_delay, source, destination):
-        """Obtain paths with total delays equal or close to the user's requirements.
-
-        This function utilizes the ExactDelayPathfinder
-        library developed by the AmLight team at FIU.
-        """
-        pathfinder = ExactDelayPathfinder()
-        result = pathfinder.search(self.graph, total_delay, source, destination)
-        return result
 
     def constrained_flexible_paths(self, source, destination,
                                    minimum_hits=None, **metrics):
