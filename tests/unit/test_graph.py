@@ -2,10 +2,12 @@
 from unittest import TestCase
 from unittest.mock import MagicMock, call, patch
 
-# from napps.kytos.pathfinder.graph import KytosGraph
-from graph import KytosGraph
-from tests.helpers import (get_filter_links_fake, get_topology_mock,
-                           get_topology_with_metadata_mock)
+from napps.kytos.pathfinder.graph import KytosGraph
+from tests.helpers import (
+    get_filter_links_fake,
+    get_topology_mock,
+    get_topology_with_metadata_mock,
+)
 
 # pylint: disable=arguments-differ, protected-access
 
@@ -13,7 +15,7 @@ from tests.helpers import (get_filter_links_fake, get_topology_mock,
 class TestGraph(TestCase):
     """Tests for the Main class."""
 
-    @patch('networkx.Graph')
+    @patch("networkx.Graph")
     def setUp(self, mock_graph):
         """Execute steps before each tests."""
         self.mock_graph = mock_graph.return_value
@@ -36,19 +38,15 @@ class TestGraph(TestCase):
 
         return mock_update_nodes, mock_update_links, topology
 
-    # @patch('napps.kytos.pathfinder.graph.KytosGraph.update_links')
-    # @patch('napps.kytos.pathfinder.graph.KytosGraph.update_nodes')
-    @patch('graph.KytosGraph.update_links')
-    @patch('graph.KytosGraph.update_nodes')
+    @patch("napps.kytos.pathfinder.graph.KytosGraph.update_links")
+    @patch("napps.kytos.pathfinder.graph.KytosGraph.update_nodes")
     def test_update_topology_switches(self, *args):
         """Test update topology."""
         mock_update_nodes, _, topology = self.setting_update_topology(*args)
         mock_update_nodes.assert_called_with(topology.switches)
 
-    # @patch('napps.kytos.pathfinder.graph.KytosGraph.update_links')
-    # @patch('napps.kytos.pathfinder.graph.KytosGraph.update_nodes')
-    @patch('graph.KytosGraph.update_links')
-    @patch('graph.KytosGraph.update_nodes')
+    @patch("napps.kytos.pathfinder.graph.KytosGraph.update_links")
+    @patch("napps.kytos.pathfinder.graph.KytosGraph.update_nodes")
     def test_update_topology_links(self, *args):
         """Test update topology."""
         _, mock_update_links, topology = self.setting_update_topology(*args)
@@ -61,12 +59,12 @@ class TestGraph(TestCase):
         switch = topology.switches["00:00:00:00:00:00:00:01"]
 
         calls = [call(switch.id)]
-        calls += [call(interface.id)
-                  for interface in switch.interfaces.values()]
+        calls += [call(interface.id) for interface in switch.interfaces.values()]
         self.mock_graph.add_node.assert_has_calls(calls)
 
-        calls = [call(switch.id, interface.id)
-                 for interface in switch.interfaces.values()]
+        calls = [
+            call(switch.id, interface.id) for interface in switch.interfaces.values()
+        ]
 
         self.mock_graph.add_edge.assert_has_calls(calls)
 
@@ -77,59 +75,66 @@ class TestGraph(TestCase):
 
         topology = get_topology_mock()
         with self.assertRaises(Exception):
-            with patch.object(self.mock_graph, 'add_node', effect):
+            with patch.object(self.mock_graph, "add_node", effect):
                 self.kytos_graph.update_nodes(topology.switches)
 
         self.assertRaises(AttributeError)
 
     def test_remove_switch_hops(self):
         """Test remove switch hops."""
-        circuit = {"hops": ["00:00:00:00:00:00:00:01:1",
-                            "00:00:00:00:00:00:00:01",
-                            "00:00:00:00:00:00:00:01:2"]}
+        circuit = {
+            "hops": [
+                "00:00:00:00:00:00:00:01:1",
+                "00:00:00:00:00:00:00:01",
+                "00:00:00:00:00:00:00:01:2",
+            ]
+        }
 
         self.kytos_graph._remove_switch_hops(circuit)
 
-        expected_circuit = {"hops": ["00:00:00:00:00:00:00:01:1",
-                                     "00:00:00:00:00:00:00:01:2"]}
+        expected_circuit = {
+            "hops": ["00:00:00:00:00:00:00:01:1", "00:00:00:00:00:00:00:01:2"]
+        }
         self.assertEqual(circuit, expected_circuit)
 
-    @patch('networkx.shortest_simple_paths', return_value=["any"])
+    @patch("networkx.shortest_simple_paths", return_value=["any"])
     def test_shortest_paths(self, mock_shortest_simple_paths):
         """Test shortest paths."""
         source, dest = "00:00:00:00:00:00:00:01:1", "00:00:00:00:00:00:00:02:2"
         shortest_paths = self.kytos_graph.shortest_paths(source, dest)
 
-        mock_shortest_simple_paths.assert_called_with(self.kytos_graph.graph,
-                                                      source, dest, None)
+        mock_shortest_simple_paths.assert_called_with(
+            self.kytos_graph.graph, source, dest, None
+        )
         self.assertEqual(shortest_paths, ["any"])
 
-    @patch('graph.combinations', autospec=True)
+    @patch("napps.kytos.pathfinder.graph.combinations", autospec=True)
     def test_constrained_flexible_paths(self, mock_combinations):
         """Test shortest constrained paths."""
         source, dest = "00:00:00:00:00:00:00:01:1", "00:00:00:00:00:00:00:02:2"
         minimum_hits = 1
-        base_metrics = {"apple": 1}
-        flexible_metrics = {"pear": 2}
-        mock_combinations.return_value = [(('pear', 2),)]
+        base_metrics = {"bandwidth": 100}
+        flexible_metrics = {"utilization": 2}
+        mock_combinations.return_value = [(("utilization", 2),)]
         filtered_links = ["a", "b", "c"]
         filtered_links_without_metadata = filtered_links[0:2]
         constrained_shortest_paths = [["path1"], ["path2"]]
 
         self.kytos_graph._constrained_shortest_paths = MagicMock(
-            return_value=constrained_shortest_paths)
-        self.kytos_graph._filter_links = MagicMock(
-            side_effect=get_filter_links_fake)
+            return_value=constrained_shortest_paths
+        )
+        self.kytos_graph._filter_links = MagicMock(side_effect=get_filter_links_fake)
         shortest_paths = self.kytos_graph.constrained_flexible_paths(
-            source, dest, minimum_hits, base=base_metrics,
-            flexible=flexible_metrics)
+            source, dest, minimum_hits, base=base_metrics, flexible=flexible_metrics
+        )
 
-        self.kytos_graph._constrained_shortest_paths.assert_has_calls([
-            call(source, dest, filtered_links_without_metadata)])
+        self.kytos_graph._constrained_shortest_paths.assert_has_calls(
+            [call(source, dest, filtered_links_without_metadata)]
+        )
         self.kytos_graph._filter_links.assert_called()
-        self.assertEqual(shortest_paths, [
-            {"paths": constrained_shortest_paths, "metrics":
-             {"apple": 1, "pear": 2}}])
+        for constrained_path in shortest_paths:
+            assert constrained_path["hops"] in constrained_shortest_paths
+            assert constrained_path["metrics"] == {"bandwidth": 100, "utilization": 2}
 
     def test_get_link_metadata(self):
         """Test metadata retrieval."""
@@ -141,7 +146,6 @@ class TestGraph(TestCase):
         metadata = {"reliability": 5, "bandwidth": 100, "delay": 105}
         self.kytos_graph.get_link_metadata = MagicMock(return_value=metadata)
 
-        result = self.kytos_graph.get_link_metadata(
-            endpoint_a, endpoint_b)
+        result = self.kytos_graph.get_link_metadata(endpoint_a, endpoint_b)
 
-        self.assertEqual(result, metadata)
+        assert result == metadata
