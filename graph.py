@@ -131,17 +131,16 @@ class KytosGraph:
             minimum_hits = 0
         minimum_hits = min(length, max(0, minimum_hits))
         results = []
-        paths = []
         for i in range(length, minimum_hits - 1, -1):
+            paths = []
             for combo in combinations(flexible.items(), i):
                 additional = dict(combo)
                 paths = self._constrained_shortest_paths(
                     source, destination,
                     self._filter_links(first_pass_links,
                                        metadata=False, **additional))
-                if paths:
-                    results.append(
-                        {"paths": paths, "metrics": {**base, **additional}})
+                for path in paths:
+                    results.append({"hops": path, "metrics": {**base, **additional}})
             if paths:
                 break
         return results
