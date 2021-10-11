@@ -5,8 +5,7 @@ from kytos.core.interface import Interface
 from kytos.core.link import Link
 from kytos.core.switch import Switch
 
-# module under test
-from graph import KytosGraph
+from napps.kytos.pathfinder.graph import KytosGraph
 
 
 class TestResults(TestCase):

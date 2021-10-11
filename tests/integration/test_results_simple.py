@@ -11,48 +11,87 @@ class TestResultsSimple(TestResults):
     Tests if the paths returned have only legal edges.
     """
 
-    def test_path1(self):
+    def test_path_s1_s2(self):
         """Tests a simple, possible path"""
         self.initializer()
+
+        source = "S1"
+        destination = "S2"
         results = self.get_path_constrained("S1", "S2")
 
-        self.assertNotEqual(results, [])
+        assert results
+        for result in results:
+            path = result["hops"]
+            assert source == path[0]
+            assert destination == path[-1]
 
-    def test_path2(self):
+    def test_path_s1_s4(self):
         """Tests a simple, impossible path"""
         self.initializer()
-        results = self.get_path_constrained("S1", "S4")
 
-        self.assertEqual(results, [])
+        assert self.get_path_constrained("S1", "S4") == []
 
-    def test_path3(self):
+    def test_path_to_self(self):
         """Tests a path to self again"""
         self.initializer()
         results = self.get_path_constrained("S1", "S1")
 
-        self.assertNotEqual(results, [])
+        assert results
+        for result in results:
+            path = result["hops"]
+            assert "S1" == path[0]
+            assert "S1" == path[-1]
 
-    def test_path4(self):
-        """Tests constrained path to self again"""
+    def test_path_s1_s3_constrained_red(self):
+        """Tests path from s1 to s3 constrained ownership red"""
         self.initializer()
-        results = self.get_path_constrained("S5", "S5", base={"ownership": "blue"})
+
+        source = "S1"
+        destination = "S3"
+        results = self.get_path_constrained(
+            source, destination, base={"ownership": "red"}
+        )
+        assert not results
+
+    def test_path_s1_s3_constrained_blue(self):
+        """Tests path from s1 to s3 constrained ownership blue"""
+        self.initializer()
+
+        source = "S1"
+        destination = "S3"
+        results = self.get_path_constrained(
+            source, destination, base={"ownership": "blue"}
+        )
+        assert results
 
         for result in results:
-            self.assertNotEqual([], result["paths"])
-            self.assertIn(['S5'], result["paths"])
+            path = result["hops"]
+            assert source == path[0]
+            assert destination == path[-1]
 
-    def test_path5(self):
-        """Tests constrained path to self again"""
+    def test_path_s1_s3_constrained_bandwidth(self):
+        """Tests path from s1 to s3 constrained bandwdith, the best path
+        is supposed to be via s2"""
+
         self.initializer()
-        results = self.get_path_constrained("S5", "S5", flexible={"priority": 5})
+
+        source = "S1"
+        destination = "S3"
+        results = self.get_path_constrained(
+            source, destination, base={"bandwidth": 50}
+        )
+
+        assert results
 
         for result in results:
-            self.assertNotEqual([], result["paths"])
-            self.assertIn(['S5'], result["paths"])
+            path = result["hops"]
+            assert source == path[0]
+            assert "S2" in path
+            assert destination == path[-1]
 
     @staticmethod
     def generate_topology():
-        """Generates a predetermined topology"""
+        """Generates a predetermined topology. Topology 1"""
         switches = {}
         interfaces = {}
         links = {}
