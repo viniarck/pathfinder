@@ -2,7 +2,7 @@
 from kytos.core.link import Link
 
 # module under test
-from tests.integration.test_results import TestPaths
+from tests.integration.test_paths import TestPaths
 
 
 class TestPathsSimple(TestPaths):

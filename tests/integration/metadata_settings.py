@@ -1,5 +1,5 @@
 """Module to overwrite all the needed methods to test the KytosGraph in graph.py"""
-from tests.integration.test_results import TestPaths
+from tests.integration.test_paths import TestPaths
 
 
 class MetadataSettings(TestPaths):

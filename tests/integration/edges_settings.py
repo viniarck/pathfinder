@@ -4,7 +4,7 @@ from itertools import combinations
 # Core modules to import
 from kytos.core.link import Link
 
-from tests.integration.test_results import TestPaths
+from tests.integration.test_paths import TestPaths
 
 
 class EdgesSettings(TestPaths):
