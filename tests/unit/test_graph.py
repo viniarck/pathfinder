@@ -109,7 +109,7 @@ class TestGraph(TestCase):
         self.assertEqual(shortest_paths, ["any"])
 
     @patch("napps.kytos.pathfinder.graph.combinations", autospec=True)
-    def test_constrained_flexible_paths(self, mock_combinations):
+    def test_constrained_shortest_paths(self, mock_combinations):
         """Test shortest constrained paths."""
         source, dest = "00:00:00:00:00:00:00:01:1", "00:00:00:00:00:00:00:02:2"
         minimum_hits = 1
@@ -124,7 +124,7 @@ class TestGraph(TestCase):
             return_value=constrained_shortest_paths
         )
         self.kytos_graph._filter_links = MagicMock(side_effect=get_filter_links_fake)
-        shortest_paths = self.kytos_graph.constrained_flexible_paths(
+        shortest_paths = self.kytos_graph.constrained_shortest_paths(
             source, dest, minimum_hits, base=base_metrics, flexible=flexible_metrics
         )
 

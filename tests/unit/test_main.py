@@ -77,7 +77,7 @@ class TestMain(TestCase):
 
         self.assertEqual(response.status_code, 200)
 
-    def setting_shortest_constrained_path_mocked(self, mock_constrained_flexible_paths):
+    def setting_shortest_constrained_path_mocked(self, mock_constrained_shortest_paths):
         """Set the primary elements needed to test the retrieving process
         of the shortest constrained path under a mocked approach."""
         source = "00:00:00:00:00:00:00:01:1"
@@ -86,7 +86,7 @@ class TestMain(TestCase):
         base_metrics = {"ownership": "bob"}
         fle_metrics = {"delay": 30}
         metrics = {**base_metrics, **fle_metrics}
-        mock_constrained_flexible_paths.return_value = [
+        mock_constrained_shortest_paths.return_value = [
             {"paths": [path], "metrics": metrics}
         ]
 
@@ -106,28 +106,28 @@ class TestMain(TestCase):
         return response, metrics, path
 
     @patch(
-        "napps.kytos.pathfinder.graph.KytosGraph.constrained_flexible_paths",
+        "napps.kytos.pathfinder.graph.KytosGraph.constrained_shortest_paths",
         autospec=True,
     )
-    def test_shortest_constrained_path_response(self, mock_constrained_flexible_paths):
+    def test_shortest_constrained_path_response(self, mock_constrained_shortest_paths):
         """Test constrained flexible paths."""
         response, metrics, path = self.setting_shortest_constrained_path_mocked(
-            mock_constrained_flexible_paths
+            mock_constrained_shortest_paths
         )
         expected_response = [{"metrics": metrics, "paths": [path]}]
 
         self.assertEqual(response.json, expected_response)
 
     @patch(
-        "napps.kytos.pathfinder.graph.KytosGraph." + "constrained_flexible_paths",
+        "napps.kytos.pathfinder.graph.KytosGraph." + "constrained_shortest_paths",
         autospec=True,
     )
     def test_shortest_constrained_path_response_status_code(
-        self, mock_constrained_flexible_paths
+        self, mock_constrained_shortest_paths
     ):
         """Test constrained flexible paths."""
         response, _, _ = self.setting_shortest_constrained_path_mocked(
-            mock_constrained_flexible_paths
+            mock_constrained_shortest_paths
         )
 
         self.assertEqual(response.status_code, 200)
@@ -183,7 +183,7 @@ class TestMain(TestCase):
         api = get_test_client(self.napp.controller, self.napp)
 
         with patch(
-            "napps.kytos.pathfinder.graph.KytosGraph.constrained_flexible_paths",
+            "napps.kytos.pathfinder.graph.KytosGraph.constrained_shortest_paths",
             side_effect=side_effect,
         ):
             url = (

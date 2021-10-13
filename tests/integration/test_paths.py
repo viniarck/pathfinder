@@ -32,7 +32,7 @@ class TestPaths(TestCase):
     def get_path_constrained(self, source, destination, minimum_hits=None,
                              **metrics):
         """Return the constrained shortest path"""
-        return self.graph.constrained_flexible_paths(source, destination,
+        return self.graph.constrained_shortest_paths(source, destination,
                                                      minimum_hits,
                                                      **metrics)
 

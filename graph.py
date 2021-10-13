@@ -119,7 +119,7 @@ class KytosGraph:
             return []
         return paths
 
-    def constrained_flexible_paths(
+    def constrained_shortest_paths(
         self, source, destination, minimum_hits=None, **metrics
     ):
         """Calculate the constrained shortest paths with flexibility."""

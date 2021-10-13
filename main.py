@@ -101,7 +101,7 @@ class Main(KytosNApp):
         fle_metrics = data.get('flexible_metrics', {})
         minimum_hits = data.get('minimum_flexible_hits')
         try:
-            paths = self.graph.constrained_flexible_paths(source, destination,
+            paths = self.graph.constrained_shortest_paths(source, destination,
                                                           minimum_hits,
                                                           base=base_metrics,
                                                           flexible=fle_metrics)
