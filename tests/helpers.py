@@ -181,8 +181,3 @@ def get_filter_links_fake(links, metadata=True, **metrics):
         return filtered_links_without_metadata
     return filtered_links
 # pylint: enable=unused-argument
-
-
-def get_test_filter_function():
-    """Get minimum filter function."""
-    return lambda x: (lambda y: y >= x)
