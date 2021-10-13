@@ -191,7 +191,7 @@ class TestResultsEdges(EdgesSettings):
             for result in results:
                 # delay = 50 checks
                 if "delay" in result["metrics"]:
-                    for path in result["paths"]:
+                    for path in result["hops"]:
                         self.assertNotIn("S1:1", path)
                         self.assertNotIn("S2:1", path)
                         self.assertNotIn("S3:1", path)
@@ -215,7 +215,7 @@ class TestResultsEdges(EdgesSettings):
 
                 # bandwidth = 100 checks
                 if "bandwidth" in result["metrics"]:
-                    for path in result["paths"]:
+                    for path in result["hops"]:
                         self.assertNotIn("S3:1", path)
                         self.assertNotIn("S5:1", path)
                         self.assertNotIn("User1:4", path)
@@ -223,7 +223,7 @@ class TestResultsEdges(EdgesSettings):
 
                 # reliability = 3 checks
                 if "reliability" in result["metrics"]:
-                    for path in result["paths"]:
+                    for path in result["hops"]:
                         self.assertNotIn("S4:1", path)
                         self.assertNotIn("S5:2", path)
                         self.assertNotIn("S5:3", path)
@@ -231,7 +231,7 @@ class TestResultsEdges(EdgesSettings):
 
                 # ownership = "B" checks
                 self.assertIn("ownership", result["metrics"])
-                for path in result["paths"]:
+                for path in result["hops"]:
                     self.assertNotIn("S4:1", path)
                     self.assertNotIn("S5:2", path)
                     self.assertNotIn("S4:2", path)

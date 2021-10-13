@@ -231,11 +231,11 @@ class EdgesSettings(TestResults):
             for result in results:
                 if metrics is not None:
                     if metrics in result["metrics"]:
-                        for path in result["paths"]:
+                        for path in result["hops"]:
                             if item in path:
                                 valid = False
                 else:
-                    for path in result["paths"]:
+                    for path in result["hops"]:
                         if item in path:
                             valid = False
         return valid
