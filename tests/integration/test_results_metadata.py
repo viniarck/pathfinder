@@ -3,7 +3,7 @@
 from tests.integration.metadata_settings import MetadataSettings
 
 
-class TestResultsMetadata(MetadataSettings):
+class TestPathsMetadata(MetadataSettings):
     """Tests for the graph class.
 
     Tests if the metadata in search result edges have passing values.

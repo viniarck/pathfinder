@@ -8,7 +8,7 @@ from kytos.core.switch import Switch
 from napps.kytos.pathfinder.graph import KytosGraph
 
 
-class TestResults(TestCase):
+class TestPaths(TestCase):
     """Tests for the graph class."""
 
     def initializer(self, val=0):

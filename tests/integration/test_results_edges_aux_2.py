@@ -4,7 +4,7 @@
 from tests.integration.edges_settings import EdgesSettings
 
 
-class TestResultsEdgesAux2(EdgesSettings):
+class TestPathsEdgesAux2(EdgesSettings):
     """Tests for the graph class.
 
     Tests to see if reflexive searches and impossible searches

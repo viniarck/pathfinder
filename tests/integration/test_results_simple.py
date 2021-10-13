@@ -2,10 +2,10 @@
 from kytos.core.link import Link
 
 # module under test
-from tests.integration.test_results import TestResults
+from tests.integration.test_results import TestPaths
 
 
-class TestResultsSimple(TestResults):
+class TestPathsSimple(TestPaths):
     """Tests for the graph class.
 
     Tests if the paths returned have only legal edges.
@@ -96,19 +96,19 @@ class TestResultsSimple(TestResults):
         interfaces = {}
         links = {}
 
-        TestResults.create_switch("S1", switches)
-        TestResults.add_interfaces(2, switches["S1"], interfaces)
+        TestPaths.create_switch("S1", switches)
+        TestPaths.add_interfaces(2, switches["S1"], interfaces)
 
-        TestResults.create_switch("S2", switches)
-        TestResults.add_interfaces(3, switches["S2"], interfaces)
+        TestPaths.create_switch("S2", switches)
+        TestPaths.add_interfaces(3, switches["S2"], interfaces)
 
-        TestResults.create_switch("S3", switches)
-        TestResults.add_interfaces(2, switches["S3"], interfaces)
+        TestPaths.create_switch("S3", switches)
+        TestPaths.add_interfaces(2, switches["S3"], interfaces)
 
-        TestResults.create_switch("S4", switches)
-        TestResults.add_interfaces(2, switches["S4"], interfaces)
+        TestPaths.create_switch("S4", switches)
+        TestPaths.add_interfaces(2, switches["S4"], interfaces)
 
-        TestResults.create_switch("S5", switches)
+        TestPaths.create_switch("S5", switches)
 
         links["S1:1<->S2:1"] = Link(interfaces["S1:1"], interfaces["S2:1"])
         links["S1:1<->S2:1"].extend_metadata({"bandwidth": 50, "ownership": "red"})

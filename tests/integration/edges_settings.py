@@ -4,10 +4,10 @@ from itertools import combinations
 # Core modules to import
 from kytos.core.link import Link
 
-from tests.integration.test_results import TestResults
+from tests.integration.test_results import TestPaths
 
 
-class EdgesSettings(TestResults):
+class EdgesSettings(TestPaths):
     """Class to setups all the settings related to topology."""
 
     @staticmethod
@@ -17,50 +17,50 @@ class EdgesSettings(TestResults):
         interfaces = {}
         links = {}
 
-        TestResults.create_switch("S1", switches)
-        TestResults.add_interfaces(2, switches["S1"], interfaces)
+        TestPaths.create_switch("S1", switches)
+        TestPaths.add_interfaces(2, switches["S1"], interfaces)
 
-        TestResults.create_switch("S2", switches)
-        TestResults.add_interfaces(2, switches["S2"], interfaces)
+        TestPaths.create_switch("S2", switches)
+        TestPaths.add_interfaces(2, switches["S2"], interfaces)
 
-        TestResults.create_switch("S3", switches)
-        TestResults.add_interfaces(6, switches["S3"], interfaces)
+        TestPaths.create_switch("S3", switches)
+        TestPaths.add_interfaces(6, switches["S3"], interfaces)
 
-        TestResults.create_switch("S4", switches)
-        TestResults.add_interfaces(2, switches["S4"], interfaces)
+        TestPaths.create_switch("S4", switches)
+        TestPaths.add_interfaces(2, switches["S4"], interfaces)
 
-        TestResults.create_switch("S5", switches)
-        TestResults.add_interfaces(6, switches["S5"], interfaces)
+        TestPaths.create_switch("S5", switches)
+        TestPaths.add_interfaces(6, switches["S5"], interfaces)
 
-        TestResults.create_switch("S6", switches)
-        TestResults.add_interfaces(5, switches["S6"], interfaces)
+        TestPaths.create_switch("S6", switches)
+        TestPaths.add_interfaces(5, switches["S6"], interfaces)
 
-        TestResults.create_switch("S7", switches)
-        TestResults.add_interfaces(2, switches["S7"], interfaces)
+        TestPaths.create_switch("S7", switches)
+        TestPaths.add_interfaces(2, switches["S7"], interfaces)
 
-        TestResults.create_switch("S8", switches)
-        TestResults.add_interfaces(8, switches["S8"], interfaces)
+        TestPaths.create_switch("S8", switches)
+        TestPaths.add_interfaces(8, switches["S8"], interfaces)
 
-        TestResults.create_switch("S9", switches)
-        TestResults.add_interfaces(4, switches["S9"], interfaces)
+        TestPaths.create_switch("S9", switches)
+        TestPaths.add_interfaces(4, switches["S9"], interfaces)
 
-        TestResults.create_switch("S10", switches)
-        TestResults.add_interfaces(3, switches["S10"], interfaces)
+        TestPaths.create_switch("S10", switches)
+        TestPaths.add_interfaces(3, switches["S10"], interfaces)
 
-        TestResults.create_switch("S11", switches)
-        TestResults.add_interfaces(3, switches["S11"], interfaces)
+        TestPaths.create_switch("S11", switches)
+        TestPaths.add_interfaces(3, switches["S11"], interfaces)
 
-        TestResults.create_switch("User1", switches)
-        TestResults.add_interfaces(4, switches["User1"], interfaces)
+        TestPaths.create_switch("User1", switches)
+        TestPaths.add_interfaces(4, switches["User1"], interfaces)
 
-        TestResults.create_switch("User2", switches)
-        TestResults.add_interfaces(2, switches["User2"], interfaces)
+        TestPaths.create_switch("User2", switches)
+        TestPaths.add_interfaces(2, switches["User2"], interfaces)
 
-        TestResults.create_switch("User3", switches)
-        TestResults.add_interfaces(2, switches["User3"], interfaces)
+        TestPaths.create_switch("User3", switches)
+        TestPaths.add_interfaces(2, switches["User3"], interfaces)
 
-        TestResults.create_switch("User4", switches)
-        TestResults.add_interfaces(3, switches["User4"], interfaces)
+        TestPaths.create_switch("User4", switches)
+        TestPaths.add_interfaces(3, switches["User4"], interfaces)
 
         EdgesSettings._fill_links(links, interfaces)
 
