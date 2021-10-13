@@ -164,10 +164,10 @@ class KytosGraph:
 
     def _filter_links(self, links, metadata=True, **metrics):
         for metric, value in metrics.items():
-            filter_ = self._filter_functions.get(metric, None)
-            if filter_ is not None:
+            filter_func = self._filter_functions.get(metric, None)
+            if filter_func is not None:
                 try:
-                    links = filter_.run(value, links)
+                    links = filter_func(value, links)
                 except TypeError as err:
                     raise TypeError(f"Error in {metric} value: {err}")
         if not metadata:
