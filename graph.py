@@ -12,7 +12,7 @@ except ImportError:
     log.error(f"Package {PACKAGE} not found. Please 'pip install {PACKAGE}'")
 
 
-def lazy_filter(filter_type, filter_function):
+def lazy_filter(filter_type, filter_func):
     """Lazy typed filter on top of the built-in function, it's meant
     to be used when the values to be filtered for are only defined later on
     dynamically at runtime."""
@@ -20,7 +20,7 @@ def lazy_filter(filter_type, filter_function):
     def filter_closure(value, items):
         if not isinstance(value, filter_type):
             raise TypeError(f"Expected type: {filter_type}")
-        return filter(filter_function(value), items)
+        return filter(filter_func(value), items)
 
     return filter_closure
 
@@ -60,8 +60,6 @@ class KytosGraph:
         )
 
         self._filter_functions["delay"] = lazy_filter((int, float), filter_le("delay"))
-
-        self._path_function = nx.all_shortest_paths
 
     def clear(self):
         """
@@ -150,7 +148,7 @@ class KytosGraph:
         paths = []
         try:
             paths = list(
-                self._path_function(
+                nx.all_shortest_paths(
                     self.graph.edge_subgraph(links), source, destination
                 )
             )
