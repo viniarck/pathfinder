@@ -3,7 +3,9 @@
 from flask import jsonify, request
 from kytos.core import KytosNApp, log, rest
 from kytos.core.helpers import listen_to
+
 # pylint: disable=import-error
+from werkzeug.exceptions import BadRequest
 from napps.kytos.pathfinder.graph import KytosGraph
 
 
@@ -43,10 +45,11 @@ class Main(KytosNApp):
                     return []
 
                 for path in paths:
-                    head = path['hops'][:-1]
-                    tail = path['hops'][1:]
-                    if (((endpoint_a, endpoint_b) in zip(head, tail)) or
-                            ((endpoint_b, endpoint_a) in zip(head, tail))):
+                    head = path["hops"][:-1]
+                    tail = path["hops"][1:]
+                    if ((endpoint_a, endpoint_b) in zip(head, tail)) or (
+                        (endpoint_b, endpoint_a) in zip(head, tail)
+                    ):
                         filtered_paths.append(path)
         else:
             filtered_paths = paths
@@ -60,71 +63,61 @@ class Main(KytosNApp):
                     continue
 
                 for path in paths:
-                    head = path['hops'][:-1]
-                    tail = path['hops'][1:]
-                    if (((endpoint_a, endpoint_b) in zip(head, tail)) or
-                            ((endpoint_b, endpoint_a) in zip(head, tail))):
+                    head = path["hops"][:-1]
+                    tail = path["hops"][1:]
+                    if ((endpoint_a, endpoint_b) in zip(head, tail)) or (
+                        (endpoint_b, endpoint_a) in zip(head, tail)
+                    ):
 
                         filtered_paths.remove(path)
 
         return filtered_paths
 
-    @rest('v2/', methods=['POST'])
+    @rest("v2/", methods=["POST"])
     def shortest_path(self):
         """Calculate the best path between the source and destination."""
         data = request.get_json()
 
-        desired = data.get('desired_links')
-        undesired = data.get('undesired_links')
-        parameter = data.get('parameter')
+        desired = data.get("desired_links")
+        undesired = data.get("undesired_links")
+        parameter = data.get("parameter")
+        spf_attr = data.get("spf_attribute")
 
-        paths = []
-        for path in self.graph.shortest_paths(data['source'],
-                                              data['destination'],
-                                              parameter):
+        if not spf_attr:
+            spf_attr = parameter or "weight"
 
-            paths.append({'hops': path})
+        if spf_attr not in self.graph._spf_edge_data_cbs:
+            raise BadRequest(
+                "Invalid 'spf_attribute'. Valid values: "
+                f"{', '.join(self.graph._spf_edge_data_cbs.keys())}"
+            )
+
+        paths = self.graph._path_cost_builder(
+            self.graph.shortest_paths(
+                data["source"],
+                data["destination"],
+                weight=self.graph._spf_edge_data_cbs[spf_attr],
+            ),
+            weight=spf_attr
+        )
 
         paths = self._filter_paths(paths, desired, undesired)
-        return jsonify({'paths': paths})
+        return jsonify({"paths": paths})
 
-    @rest('v2/best-constrained-paths', methods=['POST'])
-    def shortest_constrained_path(self):
-        """
-        Get the set of shortest paths between the source and destination.
-        """
-        data = request.get_json()
-
-        source = data.get('source')
-        destination = data.get('destination')
-        base_metrics = data.get('base_metrics', {})
-        fle_metrics = data.get('flexible_metrics', {})
-        minimum_hits = data.get('minimum_flexible_hits')
-        try:
-            paths = self.graph.constrained_shortest_paths(source, destination,
-                                                          minimum_hits,
-                                                          base=base_metrics,
-                                                          flexible=fle_metrics)
-            return jsonify(paths)
-        except TypeError as err:
-            return jsonify({"error": str(err)}), 400
-        except Exception as err:
-            return jsonify({"error": str(err)}), 500
-
-    @listen_to('kytos.topology.updated')
+    @listen_to("kytos.topology.updated")
     def update_topology(self, event):
         """
         Update the graph when the network topology was updated.
 
         Clear the current graph and create a new with the most topology updated.
         """
-        if 'topology' not in event.content:
+        if "topology" not in event.content:
             return
         try:
-            topology = event.content['topology']
+            topology = event.content["topology"]
             self._topology = topology
             self.graph.update_topology(topology)
-            log.debug('Topology graph updated.')
+            log.debug("Topology graph updated.")
         except TypeError as err:
             log.debug(err)
         except Exception as err:

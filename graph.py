@@ -3,6 +3,13 @@
 from itertools import combinations
 
 from kytos.core import log
+from napps.kytos.pathfinder.utils import lazy_filter
+from napps.kytos.pathfinder.utils import nx_edge_data_delay
+from napps.kytos.pathfinder.utils import nx_edge_data_priority
+from napps.kytos.pathfinder.utils import nx_edge_data_weight
+from napps.kytos.pathfinder.utils import filter_le
+from napps.kytos.pathfinder.utils import filter_ge
+from napps.kytos.pathfinder.utils import filter_in
 
 try:
     import networkx as nx
@@ -12,54 +19,24 @@ except ImportError:
     log.error(f"Package {PACKAGE} not found. Please 'pip install {PACKAGE}'")
 
 
-def lazy_filter(filter_type, filter_func):
-    """Lazy typed filter on top of the built-in function, it's meant
-    to be used when the values to be filtered for are only defined later on
-    dynamically at runtime."""
-
-    def filter_closure(value, items):
-        if not isinstance(value, filter_type):
-            raise TypeError(f"Expected type: {filter_type}")
-        return filter(filter_func(value), items)
-
-    return filter_closure
-
-
 class KytosGraph:
     """Class responsible for the graph generation."""
 
     def __init__(self):
         self.graph = nx.Graph()
-        self._filter_functions = {}
-
-        def filter_le(metric):
-            return lambda x: (lambda nx_edge_tup: nx_edge_tup[2].get(metric, x) <= x)
-
-        def filter_ge(metric):
-            return lambda x: (lambda nx_edge_tup: nx_edge_tup[2].get(metric, x) >= x)
-
-        def filter_in(metric):
-            return lambda x: (lambda nx_edge_tup: x in nx_edge_tup[2].get(metric, {x}))
-
-        self._filter_functions["ownership"] = lazy_filter(str, filter_in("ownership"))
-
-        self._filter_functions["bandwidth"] = lazy_filter(
-            (int, float), filter_ge("bandwidth")
-        )
-
-        self._filter_functions["reliability"] = lazy_filter(
-            (int, float), filter_ge("reliability")
-        )
-
-        self._filter_functions["priority"] = lazy_filter(
-            (int, float), filter_le("priority")
-        )
-
-        self._filter_functions["utilization"] = lazy_filter(
-            (int, float), filter_le("utilization")
-        )
-
-        self._filter_functions["delay"] = lazy_filter((int, float), filter_le("delay"))
+        self._filter_functions = {
+            "ownership": lazy_filter(str, filter_in("ownership")),
+            "bandwidth": lazy_filter((int, float), filter_ge("bandwidth")),
+            "reliability": lazy_filter((int, float), filter_ge("reliability")),
+            "priority": lazy_filter((int, float), filter_le("priority")),
+            "utilization": lazy_filter((int, float), filter_le("utilization")),
+            "delay": lazy_filter((int, float), filter_le("delay")),
+        }
+        self._spf_edge_data_cbs = {
+            "weight": nx_edge_data_weight,
+            "delay": nx_edge_data_delay,
+            "priority": nx_edge_data_priority,
+        }
 
     def clear(self):
         """
@@ -107,11 +84,43 @@ class KytosGraph:
             if len(hop.split(":")) == 8:
                 circuit["hops"].remove(hop)
 
-    def shortest_paths(self, source, destination, parameter=None):
+    def _path_cost(self, path, weight="weight", default_cost=1):
+        """Compute the path cost given an attribute."""
+        cost = 0
+        for node, nbr in nx.utils.pairwise(path):
+            cost += self.graph[node][nbr].get(weight, default_cost)
+        return cost
+
+    def _path_cost_builder(self, paths, weight="weight", default_weight=1):
+        """Build the cost of a path given a list of paths."""
+        paths_acc = []
+        for path in paths:
+            if isinstance(path, list):
+                paths_acc.append(
+                    {
+                        "hops": path,
+                        "cost": self._path_cost(
+                            path, weight=weight, default_cost=default_weight
+                        ),
+                    }
+                )
+            elif isinstance(path, dict):
+                path["cost"] = self._path_cost(
+                    path, weight=weight, default_cost=default_weight
+                )
+                paths_acc.append(path)
+            else:
+                raise TypeError(
+                    f"path type: '{type(path)}' must be be either list or dict. "
+                    f"path: {path}"
+                )
+        return paths_acc
+
+    def shortest_paths(self, source, destination, weight=None):
         """Calculate the shortest paths and return them."""
         try:
             paths = list(
-                nx.shortest_simple_paths(self.graph, source, destination, parameter)
+                nx.all_shortest_paths(self.graph, source, destination, weight=weight)
             )
         except (NodeNotFound, NetworkXNoPath):
             return []
