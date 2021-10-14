@@ -118,7 +118,8 @@ class Test(TestCommand):
         if markers == "small":
             markers = 'not medium and not large'
         size_args = "" if self.size == "all" else "-m '%s'" % markers
-        return '--addopts="tests/%s %s"' % (self.type, size_args)
+        test_type = "" if self.type == "all" else self.type
+        return '--addopts="tests/%s %s"' % (test_type, size_args)
 
     def run(self):
         """Run tests."""
