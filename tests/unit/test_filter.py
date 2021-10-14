@@ -1,7 +1,7 @@
 """Test filter methods"""
 from unittest import TestCase
 
-from napps.kytos.pathfinder.graph import lazy_filter
+from napps.kytos.pathfinder.utils import lazy_filter
 from napps.kytos.pathfinder.graph import KytosGraph
 
 

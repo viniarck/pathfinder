@@ -97,14 +97,14 @@ class TestGraph(TestCase):
         }
         self.assertEqual(circuit, expected_circuit)
 
-    @patch("networkx.shortest_simple_paths", return_value=["any"])
+    @patch("networkx.all_shortest_paths", return_value=["any"])
     def test_shortest_paths(self, mock_shortest_simple_paths):
         """Test shortest paths."""
         source, dest = "00:00:00:00:00:00:00:01:1", "00:00:00:00:00:00:00:02:2"
         shortest_paths = self.kytos_graph.shortest_paths(source, dest)
 
         mock_shortest_simple_paths.assert_called_with(
-            self.kytos_graph.graph, source, dest, None
+            self.kytos_graph.graph, source, dest, weight=None
         )
         self.assertEqual(shortest_paths, ["any"])
 

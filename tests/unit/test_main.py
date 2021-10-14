@@ -46,9 +46,12 @@ class TestMain(TestCase):
 
         return api, path
 
+    @patch("napps.kytos.pathfinder.graph.KytosGraph._path_cost")
     @patch("napps.kytos.pathfinder.graph.KytosGraph.shortest_paths")
-    def test_shortest_path_path_response(self, mock_shortest_paths):
+    def test_shortest_path_path_response(self, mock_shortest_paths, path_cost):
         """Test shortest path."""
+        cost_mocked_value = 1
+        path_cost.return_value = cost_mocked_value
         api, path = self.setting_shortest_path_mocked(mock_shortest_paths)
         url = "http://127.0.0.1:8181/api/kytos/pathfinder/v2"
         data = {
@@ -59,12 +62,14 @@ class TestMain(TestCase):
         }
         response = api.open(url, method="POST", json=data)
 
-        expected_response = {"paths": [{"hops": path}]}
+        expected_response = {"paths": [{"hops": path, "cost": cost_mocked_value}]}
         self.assertEqual(response.json, expected_response)
 
+    @patch("napps.kytos.pathfinder.graph.KytosGraph._path_cost")
     @patch("napps.kytos.pathfinder.graph.KytosGraph.shortest_paths")
-    def test_shortest_path_response_status_code(self, mock_shortest_paths):
+    def test_shortest_path_response_status_code(self, mock_shortest_paths, path_cost):
         """Test shortest path."""
+        path_cost.return_value = 1
         api, _ = self.setting_shortest_path_mocked(mock_shortest_paths)
         url = "http://127.0.0.1:8181/api/kytos/pathfinder/v2"
         data = {
@@ -91,9 +96,7 @@ class TestMain(TestCase):
         ]
 
         api = get_test_client(self.napp.controller, self.napp)
-        url = (
-            "http://127.0.0.1:8181/api/kytos/pathfinder/v2/" + "best-constrained-paths"
-        )
+        url = "http://127.0.0.1:8181/api/kytos/pathfinder/v2/"
         data = {
             "source": "00:00:00:00:00:00:00:01:1",
             "destination": "00:00:00:00:00:00:00:02:1",
@@ -186,10 +189,7 @@ class TestMain(TestCase):
             "napps.kytos.pathfinder.graph.KytosGraph.constrained_shortest_paths",
             side_effect=side_effect,
         ):
-            url = (
-                "http://127.0.0.1:8181/api/kytos/pathfinder/v2/"
-                + "best-constrained-paths"
-            )
+            url = "http://127.0.0.1:8181/api/kytos/pathfinder/v2/"
 
             data = {
                 "source": "00:00:00:00:00:00:00:01:1",
@@ -208,9 +208,3 @@ class TestMain(TestCase):
         response = self.setting_shortest_constrained_path_exception(TypeError)
 
         self.assertEqual(response.status_code, 400)
-
-    def test_shortest_constrained_path_500_exception(self):
-        """Test shortest path."""
-        response = self.setting_shortest_constrained_path_exception(Exception)
-
-        self.assertEqual(response.status_code, 500)
