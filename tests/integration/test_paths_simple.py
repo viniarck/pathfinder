@@ -49,7 +49,7 @@ class TestPathsSimple(TestPaths):
         source = "S1"
         destination = "S3"
         results = self.get_path_constrained(
-            source, destination, base={"ownership": "red"}
+            source, destination, mandatory_metrics={"ownership": "red"}
         )
         assert not results
 
@@ -60,7 +60,7 @@ class TestPathsSimple(TestPaths):
         source = "S1"
         destination = "S3"
         results = self.get_path_constrained(
-            source, destination, base={"ownership": "blue"}
+            source, destination, mandatory_metrics={"ownership": "blue"}
         )
         assert results
 
@@ -78,7 +78,7 @@ class TestPathsSimple(TestPaths):
         source = "S1"
         destination = "S3"
         results = self.get_path_constrained(
-            source, destination, base={"bandwidth": 50}
+            source, destination, mandatory_metrics={"bandwidth": 50}
         )
 
         assert results

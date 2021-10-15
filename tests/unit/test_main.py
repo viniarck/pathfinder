@@ -92,7 +92,7 @@ class TestMain(TestCase):
         fle_metrics = {"delay": 30}
         metrics = {**base_metrics, **fle_metrics}
         mock_constrained_shortest_paths.return_value = [
-            {"paths": [path], "metrics": metrics}
+            {"hops": [path], "metrics": metrics}
         ]
 
         api = get_test_client(self.napp.controller, self.napp)
@@ -108,27 +108,36 @@ class TestMain(TestCase):
 
         return response, metrics, path
 
+    @patch("napps.kytos.pathfinder.graph.KytosGraph._path_cost")
     @patch(
         "napps.kytos.pathfinder.graph.KytosGraph.constrained_shortest_paths",
         autospec=True,
     )
-    def test_shortest_constrained_path_response(self, mock_constrained_shortest_paths):
+    def test_shortest_constrained_path_response(
+        self, mock_constrained_shortest_paths, path_cost
+    ):
         """Test constrained flexible paths."""
+        cost_mocked_value = 1
+        path_cost.return_value = cost_mocked_value
         response, metrics, path = self.setting_shortest_constrained_path_mocked(
             mock_constrained_shortest_paths
         )
-        expected_response = [{"metrics": metrics, "paths": [path]}]
+        expected_response = [
+            {"metrics": metrics, "hops": [path], "cost": cost_mocked_value}
+        ]
 
-        self.assertEqual(response.json, expected_response)
+        self.assertDictEqual(response.json["paths"][0], expected_response[0])
 
+    @patch("napps.kytos.pathfinder.graph.KytosGraph._path_cost")
     @patch(
-        "napps.kytos.pathfinder.graph.KytosGraph." + "constrained_shortest_paths",
+        "napps.kytos.pathfinder.graph.KytosGraph.constrained_shortest_paths",
         autospec=True,
     )
     def test_shortest_constrained_path_response_status_code(
-        self, mock_constrained_shortest_paths
+        self, mock_constrained_shortest_paths, path_cost
     ):
         """Test constrained flexible paths."""
+        path_cost.return_value = 1
         response, _, _ = self.setting_shortest_constrained_path_mocked(
             mock_constrained_shortest_paths
         )

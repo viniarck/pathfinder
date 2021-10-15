@@ -113,7 +113,7 @@ class TestGraph(TestCase):
         """Test shortest constrained paths."""
         source, dest = "00:00:00:00:00:00:00:01:1", "00:00:00:00:00:00:00:02:2"
         minimum_hits = 1
-        base_metrics = {"bandwidth": 100}
+        mandatory_metrics = {"bandwidth": 100}
         flexible_metrics = {"utilization": 2}
         mock_combinations.return_value = [(("utilization", 2),)]
         filtered_links = ["a", "b", "c"]
@@ -125,11 +125,15 @@ class TestGraph(TestCase):
         )
         self.kytos_graph._filter_links = MagicMock(side_effect=get_filter_links_fake)
         shortest_paths = self.kytos_graph.constrained_shortest_paths(
-            source, dest, minimum_hits, base=base_metrics, flexible=flexible_metrics
+            source,
+            dest,
+            minimum_hits=minimum_hits,
+            mandatory_metrics=mandatory_metrics,
+            flexible_metrics=flexible_metrics,
         )
 
         self.kytos_graph._constrained_shortest_paths.assert_has_calls(
-            [call(source, dest, filtered_links_without_metadata)]
+            [call(source, dest, filtered_links_without_metadata, weight=None)]
         )
         self.kytos_graph._filter_links.assert_called()
         for constrained_path in shortest_paths:

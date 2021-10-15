@@ -21,7 +21,7 @@ class TestPathsEdgesSuite3(EdgesSettings):
         self.assertTrue(
             self.paths_between_all_users(
                 "S1:1",
-                flexible={
+                flexible_metrics={
                     "delay": 50,
                     "bandwidth": 100,
                     "reliability": 3,
@@ -42,7 +42,7 @@ class TestPathsEdgesSuite3(EdgesSettings):
         self.assertTrue(
             self.paths_between_all_users(
                 "S2:1",
-                flexible={
+                flexible_metrics={
                     "delay": 50,
                     "bandwidth": 100,
                     "reliability": 3,
@@ -63,7 +63,7 @@ class TestPathsEdgesSuite3(EdgesSettings):
         self.assertTrue(
             self.paths_between_all_users(
                 "S3:1",
-                flexible={
+                flexible_metrics={
                     "delay": 50,
                     "bandwidth": 100,
                     "reliability": 3,
@@ -84,7 +84,7 @@ class TestPathsEdgesSuite3(EdgesSettings):
         self.assertTrue(
             self.paths_between_all_users(
                 "S5:1",
-                flexible={
+                flexible_metrics={
                     "delay": 50,
                     "bandwidth": 100,
                     "reliability": 3,
@@ -105,7 +105,7 @@ class TestPathsEdgesSuite3(EdgesSettings):
         self.assertTrue(
             self.paths_between_all_users(
                 "S4:2",
-                flexible={
+                flexible_metrics={
                     "delay": 50,
                     "bandwidth": 100,
                     "reliability": 3,
@@ -126,7 +126,7 @@ class TestPathsEdgesSuite3(EdgesSettings):
         self.assertTrue(
             self.paths_between_all_users(
                 "User1:2",
-                flexible={
+                flexible_metrics={
                     "delay": 50,
                     "bandwidth": 100,
                     "reliability": 3,
@@ -147,7 +147,7 @@ class TestPathsEdgesSuite3(EdgesSettings):
         self.assertTrue(
             self.paths_between_all_users(
                 "S5:5",
-                flexible={
+                flexible_metrics={
                     "delay": 50,
                     "bandwidth": 100,
                     "reliability": 3,
@@ -168,7 +168,7 @@ class TestPathsEdgesSuite3(EdgesSettings):
         self.assertTrue(
             self.paths_between_all_users(
                 "S8:2",
-                flexible={
+                flexible_metrics={
                     "delay": 50,
                     "bandwidth": 100,
                     "reliability": 3,
@@ -189,7 +189,7 @@ class TestPathsEdgesSuite3(EdgesSettings):
         self.assertTrue(
             self.paths_between_all_users(
                 "S5:6",
-                flexible={
+                flexible_metrics={
                     "delay": 50,
                     "bandwidth": 100,
                     "reliability": 3,
@@ -210,7 +210,7 @@ class TestPathsEdgesSuite3(EdgesSettings):
         self.assertTrue(
             self.paths_between_all_users(
                 "User1:3",
-                flexible={
+                flexible_metrics={
                     "delay": 50,
                     "bandwidth": 100,
                     "reliability": 3,
@@ -231,7 +231,7 @@ class TestPathsEdgesSuite3(EdgesSettings):
         self.assertTrue(
             self.paths_between_all_users(
                 "S6:3",
-                flexible={
+                flexible_metrics={
                     "delay": 50,
                     "bandwidth": 100,
                     "reliability": 3,
@@ -252,7 +252,7 @@ class TestPathsEdgesSuite3(EdgesSettings):
         self.assertTrue(
             self.paths_between_all_users(
                 "S9:1",
-                flexible={
+                flexible_metrics={
                     "delay": 50,
                     "bandwidth": 100,
                     "reliability": 3,
@@ -273,7 +273,7 @@ class TestPathsEdgesSuite3(EdgesSettings):
         self.assertTrue(
             self.paths_between_all_users(
                 "S6:4",
-                flexible={
+                flexible_metrics={
                     "delay": 50,
                     "bandwidth": 100,
                     "reliability": 3,
@@ -294,7 +294,7 @@ class TestPathsEdgesSuite3(EdgesSettings):
         self.assertTrue(
             self.paths_between_all_users(
                 "S9:2",
-                flexible={
+                flexible_metrics={
                     "delay": 50,
                     "bandwidth": 100,
                     "reliability": 3,
@@ -315,7 +315,7 @@ class TestPathsEdgesSuite3(EdgesSettings):
         self.assertTrue(
             self.paths_between_all_users(
                 "S6:5",
-                flexible={
+                flexible_metrics={
                     "delay": 50,
                     "bandwidth": 100,
                     "reliability": 3,
@@ -336,7 +336,7 @@ class TestPathsEdgesSuite3(EdgesSettings):
         self.assertTrue(
             self.paths_between_all_users(
                 "S10:1",
-                flexible={
+                flexible_metrics={
                     "delay": 50,
                     "bandwidth": 100,
                     "reliability": 3,
@@ -357,7 +357,7 @@ class TestPathsEdgesSuite3(EdgesSettings):
         self.assertTrue(
             self.paths_between_all_users(
                 "S8:5",
-                flexible={
+                flexible_metrics={
                     "delay": 50,
                     "bandwidth": 100,
                     "reliability": 3,
@@ -378,7 +378,7 @@ class TestPathsEdgesSuite3(EdgesSettings):
         self.assertTrue(
             self.paths_between_all_users(
                 "S9:4",
-                flexible={
+                flexible_metrics={
                     "delay": 50,
                     "bandwidth": 100,
                     "reliability": 3,
@@ -399,7 +399,7 @@ class TestPathsEdgesSuite3(EdgesSettings):
         self.assertTrue(
             self.paths_between_all_users(
                 "User1:4",
-                flexible={
+                flexible_metrics={
                     "delay": 50,
                     "bandwidth": 100,
                     "reliability": 3,
@@ -420,7 +420,7 @@ class TestPathsEdgesSuite3(EdgesSettings):
         self.assertTrue(
             self.paths_between_all_users(
                 "User4:3",
-                flexible={
+                flexible_metrics={
                     "delay": 50,
                     "bandwidth": 100,
                     "reliability": 3,
@@ -441,7 +441,7 @@ class TestPathsEdgesSuite3(EdgesSettings):
         self.assertTrue(
             self.paths_between_all_users(
                 "S3:1",
-                flexible={
+                flexible_metrics={
                     "delay": 50,
                     "bandwidth": 100,
                     "reliability": 3,
@@ -462,7 +462,7 @@ class TestPathsEdgesSuite3(EdgesSettings):
         self.assertTrue(
             self.paths_between_all_users(
                 "S5:1",
-                flexible={
+                flexible_metrics={
                     "delay": 50,
                     "bandwidth": 100,
                     "reliability": 3,
@@ -483,7 +483,7 @@ class TestPathsEdgesSuite3(EdgesSettings):
         self.assertTrue(
             self.paths_between_all_users(
                 "User1:4",
-                flexible={
+                flexible_metrics={
                     "delay": 50,
                     "bandwidth": 100,
                     "reliability": 3,
@@ -504,7 +504,7 @@ class TestPathsEdgesSuite3(EdgesSettings):
         self.assertTrue(
             self.paths_between_all_users(
                 "User4:3",
-                flexible={
+                flexible_metrics={
                     "delay": 50,
                     "bandwidth": 100,
                     "reliability": 3,
@@ -525,7 +525,7 @@ class TestPathsEdgesSuite3(EdgesSettings):
         self.assertTrue(
             self.paths_between_all_users(
                 "S4:1",
-                flexible={
+                flexible_metrics={
                     "delay": 50,
                     "bandwidth": 100,
                     "reliability": 3,
@@ -546,7 +546,7 @@ class TestPathsEdgesSuite3(EdgesSettings):
         self.assertTrue(
             self.paths_between_all_users(
                 "S5:2",
-                flexible={
+                flexible_metrics={
                     "delay": 50,
                     "bandwidth": 100,
                     "reliability": 3,
@@ -567,7 +567,7 @@ class TestPathsEdgesSuite3(EdgesSettings):
         self.assertTrue(
             self.paths_between_all_users(
                 "S5:3",
-                flexible={
+                flexible_metrics={
                     "delay": 50,
                     "bandwidth": 100,
                     "reliability": 3,
@@ -589,7 +589,7 @@ class TestPathsEdgesSuite3(EdgesSettings):
         self.assertTrue(
             self.paths_between_all_users(
                 "S6:1",
-                flexible={
+                flexible_metrics={
                     "delay": 50,
                     "bandwidth": 100,
                     "reliability": 3,
@@ -611,7 +611,7 @@ class TestPathsEdgesSuite3(EdgesSettings):
         self.assertTrue(
             self.paths_between_all_users(
                 "S4:1",
-                flexible={
+                flexible_metrics={
                     "delay": 50,
                     "bandwidth": 100,
                     "reliability": 3,
@@ -632,7 +632,7 @@ class TestPathsEdgesSuite3(EdgesSettings):
         self.assertTrue(
             self.paths_between_all_users(
                 "S5:2",
-                flexible={
+                flexible_metrics={
                     "delay": 50,
                     "bandwidth": 100,
                     "reliability": 3,
@@ -653,7 +653,7 @@ class TestPathsEdgesSuite3(EdgesSettings):
         self.assertTrue(
             self.paths_between_all_users(
                 "S4:2",
-                flexible={
+                flexible_metrics={
                     "delay": 50,
                     "bandwidth": 100,
                     "reliability": 3,
@@ -674,7 +674,7 @@ class TestPathsEdgesSuite3(EdgesSettings):
         self.assertTrue(
             self.paths_between_all_users(
                 "User1:2",
-                flexible={
+                flexible_metrics={
                     "delay": 50,
                     "bandwidth": 100,
                     "reliability": 3,
@@ -694,7 +694,7 @@ class TestPathsEdgesSuite3(EdgesSettings):
         self.assertTrue(
             self.paths_between_all_users(
                 "S5:4",
-                flexible={
+                flexible_metrics={
                     "delay": 50,
                     "bandwidth": 100,
                     "reliability": 3,
@@ -715,7 +715,7 @@ class TestPathsEdgesSuite3(EdgesSettings):
         self.assertTrue(
             self.paths_between_all_users(
                 "S6:2",
-                flexible={
+                flexible_metrics={
                     "delay": 50,
                     "bandwidth": 100,
                     "reliability": 3,
@@ -735,7 +735,7 @@ class TestPathsEdgesSuite3(EdgesSettings):
         self.assertTrue(
             self.paths_between_all_users(
                 "S6:5",
-                flexible={
+                flexible_metrics={
                     "delay": 50,
                     "bandwidth": 100,
                     "reliability": 3,
@@ -755,7 +755,7 @@ class TestPathsEdgesSuite3(EdgesSettings):
         self.assertTrue(
             self.paths_between_all_users(
                 "S10:1",
-                flexible={
+                flexible_metrics={
                     "delay": 50,
                     "bandwidth": 100,
                     "reliability": 3,
@@ -776,7 +776,7 @@ class TestPathsEdgesSuite3(EdgesSettings):
         self.assertTrue(
             self.paths_between_all_users(
                 "S8:6",
-                flexible={
+                flexible_metrics={
                     "delay": 50,
                     "bandwidth": 100,
                     "reliability": 3,
@@ -796,7 +796,7 @@ class TestPathsEdgesSuite3(EdgesSettings):
         self.assertTrue(
             self.paths_between_all_users(
                 "S10:2",
-                flexible={
+                flexible_metrics={
                     "delay": 50,
                     "bandwidth": 100,
                     "reliability": 3,
@@ -816,7 +816,7 @@ class TestPathsEdgesSuite3(EdgesSettings):
         self.assertTrue(
             self.paths_between_all_users(
                 "S10:3",
-                flexible={
+                flexible_metrics={
                     "delay": 50,
                     "bandwidth": 100,
                     "reliability": 3,
@@ -836,7 +836,7 @@ class TestPathsEdgesSuite3(EdgesSettings):
         self.assertTrue(
             self.paths_between_all_users(
                 "User2:1",
-                flexible={
+                flexible_metrics={
                     "delay": 50,
                     "bandwidth": 100,
                     "reliability": 3,

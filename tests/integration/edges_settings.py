@@ -71,89 +71,112 @@ class EdgesSettings(TestPaths):
     @staticmethod
     def _add_metadata_to_links(links):
         links["S1:1<->S2:1"].extend_metadata(
-            {"reliability": 5, "bandwidth": 100, "delay": 105})
+            {"reliability": 5, "bandwidth": 100, "delay": 105}
+        )
 
         links["S1:2<->User1:1"].extend_metadata(
-            {"reliability": 5, "bandwidth": 100, "delay": 1})
+            {"reliability": 5, "bandwidth": 100, "delay": 1}
+        )
 
         links["S2:2<->User4:1"].extend_metadata(
-            {"reliability": 5, "bandwidth": 100, "delay": 10})
+            {"reliability": 5, "bandwidth": 100, "delay": 10}
+        )
 
         links["S3:1<->S5:1"].extend_metadata(
-            {"reliability": 5, "bandwidth": 10, "delay": 112})
+            {"reliability": 5, "bandwidth": 10, "delay": 112}
+        )
 
         links["S3:2<->S7:1"].extend_metadata(
-            {"reliability": 5, "bandwidth": 100, "delay": 1})
+            {"reliability": 5, "bandwidth": 100, "delay": 1}
+        )
 
         links["S3:3<->S8:1"].extend_metadata(
-            {"reliability": 5, "bandwidth": 100, "delay": 1})
+            {"reliability": 5, "bandwidth": 100, "delay": 1}
+        )
 
         links["S3:4<->S11:1"].extend_metadata(
-            {"reliability": 3, "bandwidth": 100, "delay": 6})
+            {"reliability": 3, "bandwidth": 100, "delay": 6}
+        )
 
         links["S3:5<->User3:1"].extend_metadata(
-            {"reliability": 5, "bandwidth": 100, "delay": 1})
+            {"reliability": 5, "bandwidth": 100, "delay": 1}
+        )
 
         links["S3:6<->User4:2"].extend_metadata(
-            {"reliability": 5, "bandwidth": 100, "delay": 10})
+            {"reliability": 5, "bandwidth": 100, "delay": 10}
+        )
 
         links["S4:1<->S5:2"].extend_metadata(
-            {"reliability": 1, "bandwidth": 100, "delay": 30,
-             "ownership": "A"})
+            {"reliability": 1, "bandwidth": 100, "delay": 30, "ownership": "A"}
+        )
 
         links["S4:2<->User1:2"].extend_metadata(
-            {"reliability": 3, "bandwidth": 100, "delay": 110,
-             "ownership": "A"})
+            {"reliability": 3, "bandwidth": 100, "delay": 110, "ownership": "A"}
+        )
 
         links["S5:3<->S6:1"].extend_metadata(
-            {"reliability": 1, "bandwidth": 100, "delay": 40})
+            {"reliability": 1, "bandwidth": 100, "delay": 40}
+        )
 
         links["S5:4<->S6:2"].extend_metadata(
-            {"reliability": 3, "bandwidth": 100, "delay": 40,
-             "ownership": "A"})
+            {"reliability": 3, "bandwidth": 100, "delay": 40, "ownership": "A"}
+        )
 
         links["S5:5<->S8:2"].extend_metadata(
-            {"reliability": 5, "bandwidth": 100, "delay": 112})
+            {"reliability": 5, "bandwidth": 100, "delay": 112}
+        )
 
         links["S5:6<->User1:3"].extend_metadata(
-            {"reliability": 3, "bandwidth": 100, "delay": 60})
+            {"reliability": 3, "bandwidth": 100, "delay": 60}
+        )
 
         links["S6:3<->S9:1"].extend_metadata(
-            {"reliability": 3, "bandwidth": 100, "delay": 60})
+            {"reliability": 3, "bandwidth": 100, "delay": 60}
+        )
 
         links["S6:4<->S9:2"].extend_metadata(
-            {"reliability": 5, "bandwidth": 100, "delay": 62})
+            {"reliability": 5, "bandwidth": 100, "delay": 62}
+        )
 
         links["S6:5<->S10:1"].extend_metadata(
-            {"bandwidth": 100, "delay": 108, "ownership": "A"})
+            {"bandwidth": 100, "delay": 108, "ownership": "A"}
+        )
 
         links["S7:2<->S8:3"].extend_metadata(
-            {"reliability": 5, "bandwidth": 100, "delay": 1})
+            {"reliability": 5, "bandwidth": 100, "delay": 1}
+        )
 
         links["S8:4<->S9:3"].extend_metadata(
-            {"reliability": 3, "bandwidth": 100, "delay": 32})
+            {"reliability": 3, "bandwidth": 100, "delay": 32}
+        )
 
         links["S8:5<->S9:4"].extend_metadata(
-            {"reliability": 3, "bandwidth": 100, "delay": 110})
+            {"reliability": 3, "bandwidth": 100, "delay": 110}
+        )
 
         links["S8:6<->S10:2"].extend_metadata(
-            {"reliability": 5, "bandwidth": 100, "ownership": "A"})
+            {"reliability": 5, "bandwidth": 100, "ownership": "A"}
+        )
 
         links["S8:7<->S11:2"].extend_metadata(
-            {"reliability": 3, "bandwidth": 100, "delay": 7})
+            {"reliability": 3, "bandwidth": 100, "delay": 7}
+        )
 
         links["S8:8<->User3:2"].extend_metadata(
-            {"reliability": 5, "bandwidth": 100, "delay": 1})
+            {"reliability": 5, "bandwidth": 100, "delay": 1}
+        )
 
         links["S10:3<->User2:1"].extend_metadata(
-            {"reliability": 3, "bandwidth": 100, "delay": 10,
-             "ownership": "A"})
+            {"reliability": 3, "bandwidth": 100, "delay": 10, "ownership": "A"}
+        )
 
         links["S11:3<->User2:2"].extend_metadata(
-            {"reliability": 3, "bandwidth": 100, "delay": 6})
+            {"reliability": 3, "bandwidth": 100, "delay": 6}
+        )
 
         links["User1:4<->User4:3"].extend_metadata(
-            {"reliability": 5, "bandwidth": 10, "delay": 105})
+            {"reliability": 5, "bandwidth": 10, "delay": 105}
+        )
 
     @staticmethod
     def _fill_links(links, interfaces):
@@ -211,7 +234,9 @@ class EdgesSettings(TestPaths):
 
         links["User1:4<->User4:3"] = Link(interfaces["User1:4"], interfaces["User4:3"])
 
-    def paths_between_all_users(self, item, base=None, flexible=None, metrics=None):
+    def paths_between_all_users(
+        self, item, mandatory_metrics=None, flexible_metrics=None, metrics=None
+    ):
         """Method to verify the existence of a path between
         a set of points given different constrains"""
         combos = combinations(["User1", "User2", "User3", "User4"], 2)
@@ -220,13 +245,15 @@ class EdgesSettings(TestPaths):
         valid = True
         for point_a, point_b in combos:
             results = []
-            if base is not None and flexible is None:
+            if mandatory_metrics is not None and flexible_metrics is None:
                 results = self.get_path_constrained(
-                    point_a, point_b, base=base)
+                    point_a, point_b, mandatory_metrics=mandatory_metrics
+                )
 
-            elif base is None and flexible is not None:
+            elif mandatory_metrics is None and flexible_metrics is not None:
                 results = self.get_path_constrained(
-                    point_a, point_b, flexible=flexible)
+                    point_a, point_b, flexible_metrics=flexible_metrics
+                )
 
             for result in results:
                 if metrics is not None:

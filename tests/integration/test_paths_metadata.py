@@ -87,7 +87,9 @@ class TestPathsMetadata(MetadataSettings):
 
         self.initializer()
 
-        result = self.get_path_constrained("User1", "User2", base=requirements)
+        result = self.get_path_constrained(
+            "User1", "User2", mandatory_metrics=requirements
+        )
 
         self.assertNotEqual(result, [])
 
@@ -99,7 +101,9 @@ class TestPathsMetadata(MetadataSettings):
 
         self.initializer()
 
-        result = self.get_path_constrained("User1", "User3", base=requirements)
+        result = self.get_path_constrained(
+            "User1", "User3", mandatory_metrics=requirements
+        )
 
         self.assertEqual(result, [])
 
@@ -113,7 +117,9 @@ class TestPathsMetadata(MetadataSettings):
 
         self.initializer()
 
-        result = self.get_path_constrained("User1", "User2", base=requirements)
+        result = self.get_path_constrained(
+            "User1", "User2", mandatory_metrics=requirements
+        )
 
         if result:
             for path in result[0]["hops"]:
@@ -138,13 +144,13 @@ class TestPathsMetadata(MetadataSettings):
 
         self.initializer()
 
-        paths = self.get_path_constrained("User1", "User2", base=requirements)
+        paths = self.get_path_constrained(
+            "User1", "User2", mandatory_metrics=requirements
+        )
         assert paths
 
         for path in paths:
-            for i, j in zip(
-                range(0, len(path["hops"])), range(1, len(path["hops"]))
-            ):
+            for i, j in zip(range(0, len(path["hops"])), range(1, len(path["hops"]))):
                 endpoint_a = path["hops"][i]
                 endpoint_b = path["hops"][j]
                 meta_data = self.graph.get_link_metadata(endpoint_a, endpoint_b)
@@ -158,9 +164,7 @@ class TestPathsMetadata(MetadataSettings):
     def links_metadata_values(self, path, attr):
         """Method to build a list of metadata values of the links of a path"""
         values = []
-        for i, j in zip(
-            range(0, len(path["hops"])), range(1, len(path["hops"]))
-        ):
+        for i, j in zip(range(0, len(path["hops"])), range(1, len(path["hops"]))):
             endpoint_a = path["hops"][i]
             endpoint_b = path["hops"][j]
             meta_data = self.graph.get_link_metadata(endpoint_a, endpoint_b)
@@ -176,7 +180,9 @@ class TestPathsMetadata(MetadataSettings):
 
         self.initializer()
 
-        paths = self.get_path_constrained("User1", "User2", base=requirements)
+        paths = self.get_path_constrained(
+            "User1", "User2", mandatory_metrics=requirements
+        )
         assert paths
 
         for path in paths:
@@ -194,7 +200,9 @@ class TestPathsMetadata(MetadataSettings):
 
         self.initializer(val=2)
 
-        paths = self.get_path_constrained("User1", "User2", base=requirements)
+        paths = self.get_path_constrained(
+            "User1", "User2", mandatory_metrics=requirements
+        )
         assert paths
 
         for path in paths:
@@ -211,7 +219,9 @@ class TestPathsMetadata(MetadataSettings):
 
         self.initializer()
 
-        paths = self.get_path_constrained("User1", "User2", base=requirements)
+        paths = self.get_path_constrained(
+            "User1", "User2", mandatory_metrics=requirements
+        )
         assert paths
 
         for path in paths:

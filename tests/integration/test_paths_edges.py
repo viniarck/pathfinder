@@ -55,121 +55,121 @@ class TestPathsEdges(EdgesSettings):
         """Tests paths between all users using constrained path algorithm,
         with the ownership constraint set to B.
         """
-        self.assertTrue(self.paths_between_all_users("S4:1", {'ownership': "B"}))
+        self.assertTrue(self.paths_between_all_users("S4:1", {"ownership": "B"}))
 
     def test_path3_2(self):
         """Tests paths between all users using constrained path algorithm,
         with the ownership constraint set to B.
         """
-        self.assertTrue(self.paths_between_all_users("S5:2", {'ownership': "B"}))
+        self.assertTrue(self.paths_between_all_users("S5:2", {"ownership": "B"}))
 
     def test_path3_3(self):
         """Tests paths between all users using constrained path algorithm,
         with the ownership constraint set to B.
         """
-        self.assertTrue(self.paths_between_all_users("S4:2", {'ownership': "B"}))
+        self.assertTrue(self.paths_between_all_users("S4:2", {"ownership": "B"}))
 
     def test_path3_4(self):
         """Tests paths between all users using constrained path algorithm,
         with the ownership constraint set to B.
         """
-        self.assertTrue(self.paths_between_all_users("User1:2", {'ownership': "B"}))
+        self.assertTrue(self.paths_between_all_users("User1:2", {"ownership": "B"}))
 
     def test_path3_5(self):
         """Tests paths between all users using constrained path algorithm,
         with the ownership constraint set to B.
         """
-        self.assertTrue(self.paths_between_all_users("S5:4", {'ownership': "B"}))
+        self.assertTrue(self.paths_between_all_users("S5:4", {"ownership": "B"}))
 
     def test_path3_6(self):
         """Tests paths between all users using constrained path algorithm,
         with the ownership constraint set to B.
         """
-        self.assertTrue(self.paths_between_all_users("S6:2", {'ownership': "B"}))
+        self.assertTrue(self.paths_between_all_users("S6:2", {"ownership": "B"}))
 
     def test_path3_7(self):
         """Tests paths between all users using constrained path algorithm,
         with the ownership constraint set to B.
         """
-        self.assertTrue(self.paths_between_all_users("S6:5", {'ownership': "B"}))
+        self.assertTrue(self.paths_between_all_users("S6:5", {"ownership": "B"}))
 
     def test_path3_8(self):
         """Tests paths between all users using constrained path algorithm,
         with the ownership constraint set to B.
         """
-        self.assertTrue(self.paths_between_all_users("S10:1", {'ownership': "B"}))
+        self.assertTrue(self.paths_between_all_users("S10:1", {"ownership": "B"}))
 
     def test_path3_9(self):
         """Tests paths between all users using constrained path algorithm,
         with the ownership constraint set to B.
         """
-        self.assertTrue(self.paths_between_all_users("S8:6", {'ownership': "B"}))
+        self.assertTrue(self.paths_between_all_users("S8:6", {"ownership": "B"}))
 
     def test_path3_1_0(self):
         """Tests paths between all users using constrained path algorithm,
         with the ownership constraint set to B.
         """
-        self.assertTrue(self.paths_between_all_users("S10:2", {'ownership': "B"}))
+        self.assertTrue(self.paths_between_all_users("S10:2", {"ownership": "B"}))
 
     def test_path3_1_1(self):
         """Tests paths between all users using constrained path algorithm,
         with the ownership constraint set to B.
         """
-        self.assertTrue(self.paths_between_all_users("S10:3", {'ownership': "B"}))
+        self.assertTrue(self.paths_between_all_users("S10:3", {"ownership": "B"}))
 
     def test_path3_1_2(self):
         """Tests paths between all users using constrained path algorithm,
         with the ownership constraint set to B.
         """
-        self.assertTrue(self.paths_between_all_users("User2:1", {'ownership': "B"}))
+        self.assertTrue(self.paths_between_all_users("User2:1", {"ownership": "B"}))
 
     def test_path4_1(self):
         """Tests paths between all users using constrained path algorithm,
         with the reliability constraint set to 3.
         """
-        self.assertTrue(self.paths_between_all_users("S4:1", {'reliability': 3}))
+        self.assertTrue(self.paths_between_all_users("S4:1", {"reliability": 3}))
 
     def test_path4_2(self):
         """Tests paths between all users using constrained path algorithm,
         with the reliability constraint set to 3.
         """
-        self.assertTrue(self.paths_between_all_users("S5:2", {'reliability': 3}))
+        self.assertTrue(self.paths_between_all_users("S5:2", {"reliability": 3}))
 
     def test_path4_3(self):
         """Tests paths between all users using constrained path algorithm,
         with the reliability constraint set to 3.
         """
-        self.assertTrue(self.paths_between_all_users("S5:3", {'reliability': 3}))
+        self.assertTrue(self.paths_between_all_users("S5:3", {"reliability": 3}))
 
     def test_path4_4(self):
         """Tests paths between all users using constrained path algorithm,
         with the reliability constraint set to 3.
         """
-        self.assertTrue(self.paths_between_all_users("S6:1", {'reliability': 3}))
+        self.assertTrue(self.paths_between_all_users("S6:1", {"reliability": 3}))
 
     def test_path5_1(self):
         """Tests paths between all users using constrained path algorithm,
         with the reliability constraint set to 3.
         """
-        self.assertTrue(self.paths_between_all_users("S3:1", {'bandwidth': 100}))
+        self.assertTrue(self.paths_between_all_users("S3:1", {"bandwidth": 100}))
 
     def test_path5_2(self):
         """Tests paths between all users using constrained path algorithm,
         with the reliability constraint set to 3.
         """
-        self.assertTrue(self.paths_between_all_users("S5:1", {'bandwidth': 100}))
+        self.assertTrue(self.paths_between_all_users("S5:1", {"bandwidth": 100}))
 
     def test_path5_3(self):
         """Tests paths between all users using constrained path algorithm,
         with the reliability constraint set to 3.
         """
-        self.assertTrue(self.paths_between_all_users("User1:4", {'bandwidth': 100}))
+        self.assertTrue(self.paths_between_all_users("User1:4", {"bandwidth": 100}))
 
     def test_path5_4(self):
         """Tests paths between all users using constrained path algorithm,
         with the reliability constraint set to 3.
         """
-        self.assertTrue(self.paths_between_all_users("User4:3", {'bandwidth': 100}))
+        self.assertTrue(self.paths_between_all_users("User4:3", {"bandwidth": 100}))
 
     def test_path9(self):
         """Tests paths between all users using constrained path algorithm,
@@ -183,11 +183,12 @@ class TestPathsEdges(EdgesSettings):
         self.initializer()
 
         for point_a, point_b in combos:
-            results = self.get_path_constrained(point_a, point_b,
-                                                base={"ownership": "B"},
-                                                flexible={"delay": 50,
-                                                          "bandwidth": 100,
-                                                          "reliability": 3})
+            results = self.get_path_constrained(
+                point_a,
+                point_b,
+                mandatory_metrics={"ownership": "B"},
+                flexible={"delay": 50, "bandwidth": 100, "reliability": 3},
+            )
             for result in results:
                 # delay = 50 checks
                 if "delay" in result["metrics"]:
@@ -253,5 +254,4 @@ class TestPathsEdges(EdgesSettings):
         self.initializer()
 
         with self.assertRaises(TypeError):
-            self.get_path_constrained(
-                "User1", "User2", base={"ownership": 1})
+            self.get_path_constrained("User1", "User2", mandatory_metrics={"ownership": 1})
