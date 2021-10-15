@@ -1,6 +1,7 @@
 """Module Graph of kytos/pathfinder Kytos Network Application."""
 
 from itertools import combinations
+from itertools import islice
 
 from kytos.core import log
 from napps.kytos.pathfinder.utils import lazy_filter
@@ -106,7 +107,7 @@ class KytosGraph:
                 )
             elif isinstance(path, dict):
                 path["cost"] = self._path_cost(
-                    path, weight=weight, default_cost=default_weight
+                    path["hops"], weight=weight, default_cost=default_weight
                 )
                 paths_acc.append(path)
             else:
@@ -116,15 +117,19 @@ class KytosGraph:
                 )
         return paths_acc
 
-    def shortest_paths(self, source, destination, weight=None):
+    def shortest_paths(self, source, destination, weight=None, k=1):
         """Calculate the shortest paths and return them."""
         try:
-            paths = list(
-                nx.all_shortest_paths(self.graph, source, destination, weight=weight)
+            return list(
+                islice(
+                    nx.shortest_simple_paths(
+                        self.graph, source, destination, weight=weight
+                    ),
+                    k,
+                )
             )
         except (NodeNotFound, NetworkXNoPath):
             return []
-        return paths
 
     def constrained_shortest_paths(
         self, source, destination, minimum_hits=None, weight=None, **metrics

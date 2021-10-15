@@ -83,6 +83,7 @@ class Main(KytosNApp):
         parameter = data.get("parameter")  # TODO add note to deprecate
 
         spf_attr = data.get("spf_attribute")
+        spf_max_paths = max(int(data.get("spf_max_paths", 2)), 1)
         mandatory_metrics = data.get("mandatory_metrics", {})
         flexible_metrics = data.get("flexible_metrics", {})
         minimum_hits = data.get("minimum_flexible_hits")
@@ -111,6 +112,7 @@ class Main(KytosNApp):
                     data["source"],
                     data["destination"],
                     weight=self.graph._spf_edge_data_cbs[spf_attr],
+                    k=spf_max_paths,
                 )
         except TypeError as err:
             return jsonify({"error": str(err)}), 400
