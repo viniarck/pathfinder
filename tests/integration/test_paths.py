@@ -24,18 +24,6 @@ class TestPaths(TestCase):
         self.graph.update_nodes(switches)
         self.graph.update_links(links)
 
-    def get_path(self, source, destination):
-        """Return the shortest path"""
-        results = self.graph.shortest_paths(source, destination)
-        return results
-
-    def get_path_constrained(self, source, destination, minimum_hits=None,
-                             **metrics):
-        """Return the constrained shortest path"""
-        return self.graph.constrained_shortest_paths(source, destination,
-                                                     minimum_hits,
-                                                     **metrics)
-
     @staticmethod
     def generate_topology():
         """Generates a predetermined topology"""

@@ -13,70 +13,70 @@ class TestPathsMetadata(MetadataSettings):
         """Test to see if there is a constrained
         path between User - User."""
         self.initializer()
-        result = self.get_path_constrained("User1", "User2")
+        result = self.graph.constrained_shortest_paths("User1", "User2")
         self.assertNotEqual(result, [], True)
 
     def test_path_constrained_user_switch(self):
         """Test to see if there is a constrained
         path between User - Switch."""
         self.initializer()
-        result = self.get_path_constrained("User1", "S4")
+        result = self.graph.constrained_shortest_paths("User1", "S4")
         self.assertNotEqual(result, [], True)
 
     def test_path_constrained_switch_switch(self):
         """Test to see if there is a constrained
         path between Switch - Switch."""
         self.initializer()
-        result = self.get_path_constrained("S2", "S4")
+        result = self.graph.constrained_shortest_paths("S2", "S4")
         self.assertNotEqual(result, [], True)
 
     def test_no_path_constrained_user_user(self):
         """Test to see if there is NOT a constrained
         path between User - User."""
         self.initializer()
-        result = self.get_path_constrained("User1", "User3")
+        result = self.graph.constrained_shortest_paths("User1", "User3")
         self.assertEqual(result, [], True)
 
     def test_path_constrained_user_user_t1(self):
         """Test to see if there is a constrained path between
         User - User using the 2nd topology variant."""
         self.initializer(val=1)
-        result = self.get_path_constrained("User1", "User3")
+        result = self.graph.constrained_shortest_paths("User1", "User3")
         self.assertNotEqual(result, [], True)
 
     def test_no_path_constrained_user_user_t1(self):
         """Test to see if there is NOT a constrained path between
         User - User using the 2nd topology variant."""
         self.initializer(val=1)
-        result = self.get_path_constrained("User1", "User2")
+        result = self.graph.constrained_shortest_paths("User1", "User2")
         self.assertEqual(result, [], True)
 
     def test_no_path_constrained_switch_switch_t1(self):
         """Test to see if there is NOT a constrained path between
         Switch - Switch using the 2nd topology variant."""
         self.initializer(val=1)
-        result = self.get_path_constrained("S1", "S2")
+        result = self.graph.constrained_shortest_paths("S1", "S2")
         self.assertEqual(result, [], True)
 
     def test_path_constrained_user_user_t2(self):
         """Test to see if there is a constrained path between
         User - User using the 3rd topology variant."""
         self.initializer(val=2)
-        result = self.get_path_constrained("User1", "User2")
+        result = self.graph.constrained_shortest_paths("User1", "User2")
         self.assertNotEqual(result, [], True)
 
     def test_path_constrained_user_switch_t2(self):
         """Test to see if there is a constrained path between
         User - Switch using the 3rd topology variant."""
         self.initializer(val=2)
-        result = self.get_path_constrained("User1", "S4")
+        result = self.graph.constrained_shortest_paths("User1", "S4")
         self.assertNotEqual(result, [], True)
 
     def test_path_constrained_switch_switch_t2(self):
         """Test to see if there is a constrained path between
         two switches using the 3rd topology variant."""
         self.initializer(val=2)
-        result = self.get_path_constrained("S2", "S4")
+        result = self.graph.constrained_shortest_paths("S2", "S4")
         self.assertNotEqual(result, [], True)
 
     def test_path_constrained_reliability(self):
@@ -87,7 +87,7 @@ class TestPathsMetadata(MetadataSettings):
 
         self.initializer()
 
-        result = self.get_path_constrained(
+        result = self.graph.constrained_shortest_paths(
             "User1", "User2", mandatory_metrics=requirements
         )
 
@@ -101,7 +101,7 @@ class TestPathsMetadata(MetadataSettings):
 
         self.initializer()
 
-        result = self.get_path_constrained(
+        result = self.graph.constrained_shortest_paths(
             "User1", "User3", mandatory_metrics=requirements
         )
 
@@ -117,7 +117,7 @@ class TestPathsMetadata(MetadataSettings):
 
         self.initializer()
 
-        result = self.get_path_constrained(
+        result = self.graph.constrained_shortest_paths(
             "User1", "User2", mandatory_metrics=requirements
         )
 
@@ -144,7 +144,7 @@ class TestPathsMetadata(MetadataSettings):
 
         self.initializer()
 
-        paths = self.get_path_constrained(
+        paths = self.graph.constrained_shortest_paths(
             "User1", "User2", mandatory_metrics=requirements
         )
         assert paths
@@ -180,7 +180,7 @@ class TestPathsMetadata(MetadataSettings):
 
         self.initializer()
 
-        paths = self.get_path_constrained(
+        paths = self.graph.constrained_shortest_paths(
             "User1", "User2", mandatory_metrics=requirements
         )
         assert paths
@@ -200,7 +200,7 @@ class TestPathsMetadata(MetadataSettings):
 
         self.initializer(val=2)
 
-        paths = self.get_path_constrained(
+        paths = self.graph.constrained_shortest_paths(
             "User1", "User2", mandatory_metrics=requirements
         )
         assert paths
@@ -219,7 +219,7 @@ class TestPathsMetadata(MetadataSettings):
 
         self.initializer()
 
-        paths = self.get_path_constrained(
+        paths = self.graph.constrained_shortest_paths(
             "User1", "User2", mandatory_metrics=requirements
         )
         assert paths

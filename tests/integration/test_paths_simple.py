@@ -17,7 +17,7 @@ class TestPathsSimple(TestPaths):
 
         source = "S1"
         destination = "S2"
-        results = self.get_path_constrained("S1", "S2")
+        results = self.graph.constrained_shortest_paths("S1", "S2")
 
         assert results
         for result in results:
@@ -29,12 +29,12 @@ class TestPathsSimple(TestPaths):
         """Tests a simple, impossible path"""
         self.initializer()
 
-        assert self.get_path_constrained("S1", "S4") == []
+        assert self.graph.constrained_shortest_paths("S1", "S4") == []
 
     def test_path_to_self(self):
         """Tests a path to self again"""
         self.initializer()
-        results = self.get_path_constrained("S1", "S1")
+        results = self.graph.constrained_shortest_paths("S1", "S1")
 
         assert results
         for result in results:
@@ -48,7 +48,7 @@ class TestPathsSimple(TestPaths):
 
         source = "S1"
         destination = "S3"
-        results = self.get_path_constrained(
+        results = self.graph.constrained_shortest_paths(
             source, destination, mandatory_metrics={"ownership": "red"}
         )
         assert not results
@@ -59,7 +59,7 @@ class TestPathsSimple(TestPaths):
 
         source = "S1"
         destination = "S3"
-        results = self.get_path_constrained(
+        results = self.graph.constrained_shortest_paths(
             source, destination, mandatory_metrics={"ownership": "blue"}
         )
         assert results
@@ -77,7 +77,7 @@ class TestPathsSimple(TestPaths):
 
         source = "S1"
         destination = "S3"
-        results = self.get_path_constrained(
+        results = self.graph.constrained_shortest_paths(
             source, destination, mandatory_metrics={"bandwidth": 50}
         )
 
