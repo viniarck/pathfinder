@@ -127,38 +127,43 @@ class KytosGraph:
         return paths
 
     def constrained_shortest_paths(
-        self, source, destination, minimum_hits=None, **metrics
+        self, source, destination, minimum_hits=None, weight=None, **metrics
     ):
         """Calculate the constrained shortest paths with flexibility."""
-        base = metrics.get("base", {})
-        flexible = metrics.get("flexible", {})
-        first_pass_links = list(self._filter_links(self.graph.edges(data=True), **base))
-        length = len(flexible)
+        mandatory_metrics = metrics.get("mandatory_metrics", {})
+        flexible_metrics = metrics.get("flexible_metrics", {})
+        first_pass_links = list(
+            self._filter_links(self.graph.edges(data=True), **mandatory_metrics)
+        )
+        length = len(flexible_metrics)
         if minimum_hits is None:
             minimum_hits = 0
         minimum_hits = min(length, max(0, minimum_hits))
         paths = []
         for i in range(length, minimum_hits - 1, -1):
             constrained_paths = []
-            for combo in combinations(flexible.items(), i):
+            for combo in combinations(flexible_metrics.items(), i):
                 additional = dict(combo)
                 constrained_paths = self._constrained_shortest_paths(
                     source,
                     destination,
                     self._filter_links(first_pass_links, metadata=False, **additional),
+                    weight=weight,
                 )
                 for path in constrained_paths:
-                    paths.append({"hops": path, "metrics": {**base, **additional}})
+                    paths.append(
+                        {"hops": path, "metrics": {**mandatory_metrics, **additional}}
+                    )
             if paths:
                 break
         return paths
 
-    def _constrained_shortest_paths(self, source, destination, links):
+    def _constrained_shortest_paths(self, source, destination, links, weight=None):
         paths = []
         try:
             paths = list(
                 nx.all_shortest_paths(
-                    self.graph.edge_subgraph(links), source, destination
+                    self.graph.edge_subgraph(links), source, destination, weight=weight
                 )
             )
         except NetworkXNoPath:

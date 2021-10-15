@@ -80,8 +80,12 @@ class Main(KytosNApp):
 
         desired = data.get("desired_links")
         undesired = data.get("undesired_links")
-        parameter = data.get("parameter")
+        parameter = data.get("parameter")  # TODO add note to deprecate
+
         spf_attr = data.get("spf_attribute")
+        mandatory_metrics = data.get("mandatory_metrics", {})
+        flexible_metrics = data.get("flexible_metrics", {})
+        minimum_hits = data.get("minimum_flexible_hits")
 
         if not spf_attr:
             spf_attr = parameter or "weight"
@@ -92,13 +96,28 @@ class Main(KytosNApp):
                 f"{', '.join(self.graph._spf_edge_data_cbs.keys())}"
             )
 
+        try:
+            if any([mandatory_metrics, flexible_metrics]):
+                paths = self.graph.constrained_shortest_paths(
+                    data["source"],
+                    data["destination"],
+                    minimum_hits=minimum_hits,
+                    weight=self.graph._spf_edge_data_cbs[spf_attr],
+                    mandatory_metrics=mandatory_metrics,
+                    flexible_metrics=flexible_metrics,
+                )
+            else:
+                paths = self.graph.shortest_paths(
+                    data["source"],
+                    data["destination"],
+                    weight=self.graph._spf_edge_data_cbs[spf_attr],
+                )
+        except TypeError as err:
+            return jsonify({"error": str(err)}), 400
+
         paths = self.graph._path_cost_builder(
-            self.graph.shortest_paths(
-                data["source"],
-                data["destination"],
-                weight=self.graph._spf_edge_data_cbs[spf_attr],
-            ),
-            weight=spf_attr
+            paths,
+            weight=spf_attr,
         )
 
         paths = self._filter_paths(paths, desired, undesired)
