@@ -59,11 +59,14 @@ class TestGraph(TestCase):
         switch = topology.switches["00:00:00:00:00:00:00:01"]
 
         calls = [call(switch.id)]
-        calls += [call(interface.id) for interface in switch.interfaces.values()]
+        calls += [
+            call(interface.id) for interface in switch.interfaces.values()
+        ]
         self.mock_graph.add_node.assert_has_calls(calls)
 
         calls = [
-            call(switch.id, interface.id) for interface in switch.interfaces.values()
+            call(switch.id, interface.id)
+            for interface in switch.interfaces.values()
         ]
 
         self.mock_graph.add_edge.assert_has_calls(calls)
@@ -97,34 +100,35 @@ class TestGraph(TestCase):
         }
         self.assertEqual(circuit, expected_circuit)
 
-    @patch("networkx.all_shortest_paths", return_value=["any"])
+    @patch("networkx.shortest_simple_paths", return_value=["any"])
     def test_shortest_paths(self, mock_shortest_simple_paths):
         """Test shortest paths."""
         source, dest = "00:00:00:00:00:00:00:01:1", "00:00:00:00:00:00:00:02:2"
-        shortest_paths = self.kytos_graph.shortest_paths(source, dest)
+        k_shortest_paths = self.kytos_graph.k_shortest_paths(source, dest)
 
         mock_shortest_simple_paths.assert_called_with(
             self.kytos_graph.graph, source, dest, weight=None
         )
-        self.assertEqual(shortest_paths, ["any"])
+        self.assertEqual(k_shortest_paths, ["any"])
 
     @patch("napps.kytos.pathfinder.graph.combinations", autospec=True)
-    def test_constrained_shortest_paths(self, mock_combinations):
+    def test_constrained_k_shortest_paths(self, mock_combinations):
         """Test shortest constrained paths."""
         source, dest = "00:00:00:00:00:00:00:01:1", "00:00:00:00:00:00:00:02:2"
         minimum_hits = 1
         mandatory_metrics = {"bandwidth": 100}
         flexible_metrics = {"utilization": 2}
         mock_combinations.return_value = [(("utilization", 2),)]
-        filtered_links = ["a", "b", "c"]
-        filtered_links_without_metadata = filtered_links[0:2]
-        constrained_shortest_paths = [["path1"], ["path2"]]
+        constrained_k_shortest_paths = [["path1"], ["path2"]]
 
-        self.kytos_graph._constrained_shortest_paths = MagicMock(
-            return_value=constrained_shortest_paths
+        self.kytos_graph.graph.edge_subgraph = MagicMock(return_value=None)
+        self.kytos_graph.k_shortest_paths = MagicMock(
+            return_value=constrained_k_shortest_paths
         )
-        self.kytos_graph._filter_links = MagicMock(side_effect=get_filter_links_fake)
-        shortest_paths = self.kytos_graph.constrained_shortest_paths(
+        self.kytos_graph._filter_links = MagicMock(
+            side_effect=get_filter_links_fake
+        )
+        k_shortest_paths = self.kytos_graph.constrained_k_shortest_paths(
             source,
             dest,
             minimum_hits=minimum_hits,
@@ -132,13 +136,24 @@ class TestGraph(TestCase):
             flexible_metrics=flexible_metrics,
         )
 
-        self.kytos_graph._constrained_shortest_paths.assert_has_calls(
-            [call(source, dest, filtered_links_without_metadata, weight=None)]
+        self.kytos_graph.k_shortest_paths.assert_has_calls(
+            [
+                call(
+                    source,
+                    dest,
+                    weight=None,
+                    k=1,
+                    graph=None,
+                )
+            ]
         )
         self.kytos_graph._filter_links.assert_called()
-        for constrained_path in shortest_paths:
-            assert constrained_path["hops"] in constrained_shortest_paths
-            assert constrained_path["metrics"] == {"bandwidth": 100, "utilization": 2}
+        for constrained_path in k_shortest_paths:
+            assert constrained_path["hops"] in constrained_k_shortest_paths
+            assert constrained_path["metrics"] == {
+                "bandwidth": 100,
+                "utilization": 2,
+            }
 
     def test_get_link_metadata(self):
         """Test metadata retrieval."""

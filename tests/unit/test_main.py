@@ -47,8 +47,8 @@ class TestMain(TestCase):
         return api, path
 
     @patch("napps.kytos.pathfinder.graph.KytosGraph._path_cost")
-    @patch("napps.kytos.pathfinder.graph.KytosGraph.shortest_paths")
-    def test_shortest_path_path_response(self, mock_shortest_paths, path_cost):
+    @patch("napps.kytos.pathfinder.graph.KytosGraph.k_shortest_paths")
+    def test_shortest_path_response(self, mock_shortest_paths, path_cost):
         """Test shortest path."""
         cost_mocked_value = 1
         path_cost.return_value = cost_mocked_value
@@ -66,7 +66,7 @@ class TestMain(TestCase):
         self.assertEqual(response.json, expected_response)
 
     @patch("napps.kytos.pathfinder.graph.KytosGraph._path_cost")
-    @patch("napps.kytos.pathfinder.graph.KytosGraph.shortest_paths")
+    @patch("napps.kytos.pathfinder.graph.KytosGraph.k_shortest_paths")
     def test_shortest_path_response_status_code(self, mock_shortest_paths, path_cost):
         """Test shortest path."""
         path_cost.return_value = 1
@@ -82,7 +82,9 @@ class TestMain(TestCase):
 
         self.assertEqual(response.status_code, 200)
 
-    def setting_shortest_constrained_path_mocked(self, mock_constrained_shortest_paths):
+    def setting_shortest_constrained_path_mocked(
+        self, mock_constrained_k_shortest_paths
+    ):
         """Set the primary elements needed to test the retrieving process
         of the shortest constrained path under a mocked approach."""
         source = "00:00:00:00:00:00:00:01:1"
@@ -91,7 +93,7 @@ class TestMain(TestCase):
         base_metrics = {"ownership": "bob"}
         fle_metrics = {"delay": 30}
         metrics = {**base_metrics, **fle_metrics}
-        mock_constrained_shortest_paths.return_value = [
+        mock_constrained_k_shortest_paths.return_value = [
             {"hops": [path], "metrics": metrics}
         ]
 
@@ -110,17 +112,17 @@ class TestMain(TestCase):
 
     @patch("napps.kytos.pathfinder.graph.KytosGraph._path_cost")
     @patch(
-        "napps.kytos.pathfinder.graph.KytosGraph.constrained_shortest_paths",
+        "napps.kytos.pathfinder.graph.KytosGraph.constrained_k_shortest_paths",
         autospec=True,
     )
     def test_shortest_constrained_path_response(
-        self, mock_constrained_shortest_paths, path_cost
+        self, mock_constrained_k_shortest_paths, path_cost
     ):
         """Test constrained flexible paths."""
         cost_mocked_value = 1
         path_cost.return_value = cost_mocked_value
         response, metrics, path = self.setting_shortest_constrained_path_mocked(
-            mock_constrained_shortest_paths
+            mock_constrained_k_shortest_paths
         )
         expected_response = [
             {"metrics": metrics, "hops": [path], "cost": cost_mocked_value}
@@ -130,16 +132,16 @@ class TestMain(TestCase):
 
     @patch("napps.kytos.pathfinder.graph.KytosGraph._path_cost")
     @patch(
-        "napps.kytos.pathfinder.graph.KytosGraph.constrained_shortest_paths",
+        "napps.kytos.pathfinder.graph.KytosGraph.constrained_k_shortest_paths",
         autospec=True,
     )
     def test_shortest_constrained_path_response_status_code(
-        self, mock_constrained_shortest_paths, path_cost
+        self, mock_constrained_k_shortest_paths, path_cost
     ):
         """Test constrained flexible paths."""
         path_cost.return_value = 1
         response, _, _ = self.setting_shortest_constrained_path_mocked(
-            mock_constrained_shortest_paths
+            mock_constrained_k_shortest_paths
         )
 
         self.assertEqual(response.status_code, 200)
@@ -152,6 +154,36 @@ class TestMain(TestCase):
 
         filtered_paths = self.napp._filter_paths(paths, desired, undesired)
         self.assertEqual(filtered_paths, paths)
+
+    def test_filter_paths_le_cost_response(self):
+        """Test filter paths."""
+        self.napp._topology = get_topology_mock()
+        paths = [
+            {
+                "hops": [
+                    "00:00:00:00:00:00:00:01:1",
+                    "00:00:00:00:00:00:00:01",
+                    "00:00:00:00:00:00:00:02:1",
+                    "00:00:00:00:00:00:00:02",
+                    "00:00:00:00:00:00:00:02:2",
+                    "00:00:00:00:00:00:00:04",
+                    "00:00:00:00:00:00:00:04:1",
+                ],
+                "cost": 6
+            },
+            {
+                "hops": [
+                    "00:00:00:00:00:00:00:01:1",
+                    "00:00:00:00:00:00:00:01",
+                    "00:00:00:00:00:00:00:04",
+                    "00:00:00:00:00:00:00:04:1",
+                ],
+                "cost": 3
+            }
+        ]
+        filtered_paths = self.napp._filter_paths_le_cost(paths, 3)
+        assert len(filtered_paths) == 1
+        assert filtered_paths[0]["cost"] == 3
 
     def test_filter_paths_response_on_undesired(self):
         """Test filter paths."""
@@ -195,7 +227,7 @@ class TestMain(TestCase):
         api = get_test_client(self.napp.controller, self.napp)
 
         with patch(
-            "napps.kytos.pathfinder.graph.KytosGraph.constrained_shortest_paths",
+            "napps.kytos.pathfinder.graph.KytosGraph.constrained_k_shortest_paths",
             side_effect=side_effect,
         ):
             url = "http://127.0.0.1:8181/api/kytos/pathfinder/v2/"

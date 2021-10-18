@@ -246,12 +246,12 @@ class EdgesSettings(TestPaths):
         for point_a, point_b in combos:
             results = []
             if mandatory_metrics is not None and flexible_metrics is None:
-                results = self.graph.constrained_shortest_paths(
+                results = self.graph.constrained_k_shortest_paths(
                     point_a, point_b, mandatory_metrics=mandatory_metrics
                 )
 
             elif mandatory_metrics is None and flexible_metrics is not None:
-                results = self.graph.constrained_shortest_paths(
+                results = self.graph.constrained_k_shortest_paths(
                     point_a, point_b, flexible_metrics=flexible_metrics
                 )
 
