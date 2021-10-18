@@ -73,23 +73,34 @@ class Main(KytosNApp):
 
         return filtered_paths
 
-    @rest("v2/", methods=["POST"])
-    def shortest_path(self):
-        """Calculate the best path between the source and destination."""
-        data = request.get_json()
+    def _filter_paths_le_cost(self, paths, max_cost):
+        """Filter by paths where the cost is le <= max_cost."""
+        if not max_cost:
+            return paths
+        return [path for path in paths if path["cost"] <= max_cost]
 
-        desired = data.get("desired_links")
-        undesired = data.get("undesired_links")
+    def _validate_payload(self, data):
+        """Validate shortest_path v2/ POST endpoint."""
+
+        if data.get("desired_links"):
+            if not isinstance(data["desired_links"], list):
+                raise BadRequest(
+                    f"TypeError: desired_links is supposed to be a list. type: "
+                    f"{type(data['desired_links'])}"
+                )
+
+        if data.get("undesired_links"):
+            if not isinstance(data["undesired_links"], list):
+                raise BadRequest(
+                    f"TypeError: undesired_links is supposed to be a list. type: "
+                    f"{type(data['undesired_links'])}"
+                )
+
         parameter = data.get("parameter")  # TODO add note to deprecate
-
         spf_attr = data.get("spf_attribute")
-        spf_max_paths = max(int(data.get("spf_max_paths", 2)), 1)
-        mandatory_metrics = data.get("mandatory_metrics", {})
-        flexible_metrics = data.get("flexible_metrics", {})
-        minimum_hits = data.get("minimum_flexible_hits")
-
         if not spf_attr:
-            spf_attr = parameter or "weight"
+            spf_attr = parameter or "hop"
+        data["spf_attribute"] = spf_attr
 
         if spf_attr not in self.graph._spf_edge_data_cbs:
             raise BadRequest(
@@ -98,24 +109,75 @@ class Main(KytosNApp):
             )
 
         try:
+            data["spf_max_paths"] = max(int(data.get("spf_max_paths", 2)), 1)
+        except (TypeError, ValueError):
+            raise BadRequest(
+                f"spf_max_paths {data.get('spf_max_pahts')} must be an int"
+            )
+
+        spf_max_path_cost = data.get("spf_max_path_cost")
+        if spf_max_path_cost:
+            try:
+                spf_max_path_cost = max(int(spf_max_path_cost), 1)
+                data["spf_max_path_cost"] = spf_max_path_cost
+            except (TypeError, ValueError):
+                raise BadRequest(
+                    f"spf_max_path_cost {data.get('spf_max_path_cost')} must be an int"
+                )
+
+        data["mandatory_metrics"] = data.get("mandatory_metrics", {})
+        data["flexible_metrics"] = data.get("flexible_metrics", {})
+
+        try:
+            minimum_hits = data.get("minimum_flexible_hits")
+            if minimum_hits:
+                minimum_hits = min(
+                    len(data["flexible_metrics"]), max(0, int(minimum_hits))
+                )
+            data["minimum_flexible_hits"] = minimum_hits
+        except (TypeError, ValueError):
+            raise BadRequest(
+                f"minimum_hits {data.get('minimum_flexible_hits')} must be an int"
+            )
+
+        return data
+
+    @rest("v2/", methods=["POST"])
+    def shortest_path(self):
+        """Calculate the best path between the source and destination."""
+        data = request.get_json()
+        data = self._validate_payload(data)
+
+        desired = data.get("desired_links")
+        undesired = data.get("undesired_links")
+
+        spf_attr = data.get("spf_attribute")
+        spf_max_paths = data.get("spf_max_paths")
+        spf_max_path_cost = data.get("spf_max_path_cost")
+        mandatory_metrics = data.get("mandatory_metrics")
+        flexible_metrics = data.get("flexible_metrics")
+        minimum_hits = data.get("minimum_flexible_hits")
+
+        try:
             if any([mandatory_metrics, flexible_metrics]):
-                paths = self.graph.constrained_shortest_paths(
+                paths = self.graph.constrained_k_shortest_paths(
                     data["source"],
                     data["destination"],
-                    minimum_hits=minimum_hits,
                     weight=self.graph._spf_edge_data_cbs[spf_attr],
+                    k=spf_max_paths,
+                    minimum_hits=minimum_hits,
                     mandatory_metrics=mandatory_metrics,
                     flexible_metrics=flexible_metrics,
                 )
             else:
-                paths = self.graph.shortest_paths(
+                paths = self.graph.k_shortest_paths(
                     data["source"],
                     data["destination"],
                     weight=self.graph._spf_edge_data_cbs[spf_attr],
                     k=spf_max_paths,
                 )
         except TypeError as err:
-            return jsonify({"error": str(err)}), 400
+            raise BadRequest(str(err))
 
         paths = self.graph._path_cost_builder(
             paths,
@@ -123,6 +185,7 @@ class Main(KytosNApp):
         )
 
         paths = self._filter_paths(paths, desired, undesired)
+        paths = self._filter_paths_le_cost(paths, max_cost=spf_max_path_cost)
         return jsonify({"paths": paths})
 
     @listen_to("kytos.topology.updated")

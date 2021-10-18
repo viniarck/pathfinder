@@ -34,7 +34,7 @@ class KytosGraph:
             "delay": lazy_filter((int, float), filter_le("delay")),
         }
         self._spf_edge_data_cbs = {
-            "weight": nx_edge_data_weight,
+            "hop": nx_edge_data_weight,
             "delay": nx_edge_data_delay,
             "priority": nx_edge_data_priority,
         }
@@ -85,14 +85,14 @@ class KytosGraph:
             if len(hop.split(":")) == 8:
                 circuit["hops"].remove(hop)
 
-    def _path_cost(self, path, weight="weight", default_cost=1):
+    def _path_cost(self, path, weight="hop", default_cost=1):
         """Compute the path cost given an attribute."""
         cost = 0
         for node, nbr in nx.utils.pairwise(path):
             cost += self.graph[node][nbr].get(weight, default_cost)
         return cost
 
-    def _path_cost_builder(self, paths, weight="weight", default_weight=1):
+    def _path_cost_builder(self, paths, weight="hop", default_weight=1):
         """Build the cost of a path given a list of paths."""
         paths_acc = []
         for path in paths:
@@ -117,13 +117,25 @@ class KytosGraph:
                 )
         return paths_acc
 
-    def shortest_paths(self, source, destination, weight=None, k=1):
-        """Calculate the shortest paths and return them."""
+    def k_shortest_paths(self, source, destination, weight=None, k=1, graph=None):
+        """Compute up to k shortest paths and return them.
+        This procedure is based on algorithm by Jin Y. Yen [1].
+
+        Since Yen's algorithm calls Dijkstra's up to k times, the time complexity
+        will be proportional to K * Dijkstra's, average O(K(|V| + |E|)logV), assuming
+        it's using a heap, where V is the number of vertices and E number of egdes.
+
+        References
+        ----------
+        .. [1] Jin Y. Yen, "Finding the K Shortest Loopless Paths in a
+           Network", Management Science, Vol. 17, No. 11, Theory Series
+           (Jul., 1971), pp. 712-716.
+        """
         try:
             return list(
                 islice(
                     nx.shortest_simple_paths(
-                        self.graph, source, destination, weight=weight
+                        graph or self.graph, source, destination, weight=weight
                     ),
                     k,
                 )
@@ -131,8 +143,8 @@ class KytosGraph:
         except (NodeNotFound, NetworkXNoPath):
             return []
 
-    def constrained_shortest_paths(
-        self, source, destination, minimum_hits=None, weight=None, **metrics
+    def constrained_k_shortest_paths(
+        self, source, destination, weight=None, k=1, minimum_hits=None, **metrics
     ):
         """Calculate the constrained shortest paths with flexibility."""
         mandatory_metrics = metrics.get("mandatory_metrics", {})
@@ -144,49 +156,35 @@ class KytosGraph:
         if minimum_hits is None:
             minimum_hits = 0
         minimum_hits = min(length, max(0, minimum_hits))
+
         paths = []
         for i in range(length, minimum_hits - 1, -1):
-            constrained_paths = []
             for combo in combinations(flexible_metrics.items(), i):
                 additional = dict(combo)
-                constrained_paths = self._constrained_shortest_paths(
+                filtered_links = self._filter_links(first_pass_links, **additional)
+                filtered_links = ((u, v) for u, v, d in filtered_links)
+                for path in self.k_shortest_paths(
                     source,
                     destination,
-                    self._filter_links(first_pass_links, metadata=False, **additional),
                     weight=weight,
-                )
-                for path in constrained_paths:
+                    k=k,
+                    graph=self.graph.edge_subgraph(filtered_links),
+                ):
                     paths.append(
                         {"hops": path, "metrics": {**mandatory_metrics, **additional}}
                     )
+                if len(paths) == k:
+                    return paths
             if paths:
-                break
+                return paths
         return paths
 
-    def _constrained_shortest_paths(self, source, destination, links, weight=None):
-        paths = []
-        try:
-            paths = list(
-                nx.all_shortest_paths(
-                    self.graph.edge_subgraph(links), source, destination, weight=weight
-                )
-            )
-        except NetworkXNoPath:
-            pass
-        except NodeNotFound:
-            if source == destination:
-                if source in self.graph.nodes:
-                    paths = [[source]]
-        return paths
-
-    def _filter_links(self, links, metadata=True, **metrics):
+    def _filter_links(self, links, **metrics):
         for metric, value in metrics.items():
             filter_func = self._filter_functions.get(metric, None)
             if filter_func is not None:
                 try:
                     links = filter_func(value, links)
                 except TypeError as err:
-                    raise TypeError(f"Error in {metric} value: {err}")
-        if not metadata:
-            links = ((u, v) for u, v, d in links)
+                    raise TypeError(f"Error in {metric} value: {value} err: {err}")
         return links
