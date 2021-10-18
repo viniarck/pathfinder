@@ -107,7 +107,12 @@ class EdgesSettings(TestPaths):
         )
 
         links["S4:1<->S5:2"].extend_metadata(
-            {"reliability": 1, "bandwidth": 100, "delay": 30, "ownership": "A"}
+            {
+                "reliability": 1,
+                "bandwidth": 100,
+                "delay": 30,
+                "ownership": {"A": {}},
+            }
         )
 
         links["S4:2<->User1:2"].extend_metadata(
@@ -115,7 +120,7 @@ class EdgesSettings(TestPaths):
                 "reliability": 3,
                 "bandwidth": 100,
                 "delay": 110,
-                "ownership": "A",
+                "ownership": {"A": {}},
             }
         )
 
@@ -124,7 +129,12 @@ class EdgesSettings(TestPaths):
         )
 
         links["S5:4<->S6:2"].extend_metadata(
-            {"reliability": 3, "bandwidth": 100, "delay": 40, "ownership": "A"}
+            {
+                "reliability": 3,
+                "bandwidth": 100,
+                "delay": 40,
+                "ownership": {"A": {}},
+            }
         )
 
         links["S5:5<->S8:2"].extend_metadata(
@@ -144,7 +154,7 @@ class EdgesSettings(TestPaths):
         )
 
         links["S6:5<->S10:1"].extend_metadata(
-            {"bandwidth": 100, "delay": 108, "ownership": "A"}
+            {"bandwidth": 100, "delay": 108, "ownership": {"A": {}}}
         )
 
         links["S7:2<->S8:3"].extend_metadata(
@@ -160,7 +170,7 @@ class EdgesSettings(TestPaths):
         )
 
         links["S8:6<->S10:2"].extend_metadata(
-            {"reliability": 5, "bandwidth": 100, "ownership": "A"}
+            {"reliability": 5, "bandwidth": 100, "ownership": {"A": {}}}
         )
 
         links["S8:7<->S11:2"].extend_metadata(
@@ -172,7 +182,12 @@ class EdgesSettings(TestPaths):
         )
 
         links["S10:3<->User2:1"].extend_metadata(
-            {"reliability": 3, "bandwidth": 100, "delay": 10, "ownership": "A"}
+            {
+                "reliability": 3,
+                "bandwidth": 100,
+                "delay": 10,
+                "ownership": {"A": {}},
+            }
         )
 
         links["S11:3<->User2:2"].extend_metadata(
@@ -266,28 +281,25 @@ class EdgesSettings(TestPaths):
         a set of points given different constrains"""
         combos = combinations(["User1", "User2", "User3", "User4"], 2)
         self.initializer()
+        mandatory_metrics = mandatory_metrics or {}
+        flexible_metrics = flexible_metrics or {}
 
         valid = True
-        for point_a, point_b in combos:
-            results = []
-            if mandatory_metrics is not None and flexible_metrics is None:
-                results = self.graph.constrained_k_shortest_paths(
-                    point_a, point_b, mandatory_metrics=mandatory_metrics
-                )
-
-            elif mandatory_metrics is None and flexible_metrics is not None:
-                results = self.graph.constrained_k_shortest_paths(
-                    point_a, point_b, flexible_metrics=flexible_metrics
-                )
-
-            for result in results:
+        for source, destination in combos:
+            paths = self.graph.constrained_k_shortest_paths(
+                source,
+                destination,
+                mandatory_metrics=mandatory_metrics,
+                flexible_metrics=flexible_metrics,
+            )
+            for path in paths:
                 if metrics is not None:
-                    if metrics in result["metrics"]:
-                        for path in result["hops"]:
+                    if metrics in path["metrics"]:
+                        for path in path["hops"]:
                             if item in path:
                                 valid = False
                 else:
-                    for path in result["hops"]:
+                    for path in path["hops"]:
                         if item in path:
                             valid = False
         return valid

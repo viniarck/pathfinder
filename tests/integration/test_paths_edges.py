@@ -9,207 +9,156 @@ class TestPathsEdges(EdgesSettings):
     """Tests for the graph class.
 
     Tests to see if reflexive searches and impossible searches
-    show correct results.
+    show correct paths.
     """
 
-    def test_path1(self):
+    def test_k_shortest_paths_among_users(self):
         """Tests paths between all users using unconstrained path algorithm."""
         combos = combinations(["User1", "User2", "User3", "User4"], 2)
         self.initializer()
 
-        valid = True
-        for point_a, point_b in combos:
-            results = self.graph.k_shortest_paths(point_a, point_b)
-            if not results:
-                valid = False
-                break
+        for source, destination in combos:
+            paths = self.graph.k_shortest_paths(source, destination)
+            assert paths
+            for path in paths:
+                assert path[0] == source
+                assert path[-1] == destination
 
-        self.assertNotEqual(valid, False)
-
-    def test_path12(self):
-        """Tests paths between all users using unconstrained path algorithm."""
-        combos = combinations(["User1", "User2", "User3", "User4", "User5"], 2)
-        self.initializer()
-
-        valid = True
-        for point_a, point_b in combos:
-            results = self.graph.k_shortest_paths(point_a, point_b)
-            if not results:
-                valid = False
-                break
-
-        self.assertEqual(valid, False)
-
-    def test_path2(self):
+    def test_constrained_k_shortest_paths_among_users(self):
         """Tests paths between all users using constrained path algorithm,
         with no constraints set.
         """
         combos = combinations(["User1", "User2", "User3", "User4"], 2)
         self.initializer()
 
-        for point_a, point_b in combos:
-            results = self.graph.constrained_k_shortest_paths(point_a, point_b)
-            self.assertNotEqual(results, [])
+        for source, destination in combos:
+            paths = self.graph.constrained_k_shortest_paths(
+                source, destination
+            )
+            assert paths
+            for path in paths:
+                assert path["hops"][0] == source
+                assert path["hops"][-1] == destination
 
     def test_path3_1(self):
         """Tests paths between all users using constrained path algorithm,
         with the ownership constraint set to B.
         """
-        self.assertTrue(
-            self.paths_between_all_users("S4:1", {"ownership": "B"})
-        )
+        assert self.paths_between_all_users("S4:1", {"ownership": "B"})
 
     def test_path3_2(self):
         """Tests paths between all users using constrained path algorithm,
         with the ownership constraint set to B.
         """
-        self.assertTrue(
-            self.paths_between_all_users("S5:2", {"ownership": "B"})
-        )
+        assert self.paths_between_all_users("S5:2", {"ownership": "B"})
 
     def test_path3_3(self):
         """Tests paths between all users using constrained path algorithm,
         with the ownership constraint set to B.
         """
-        self.assertTrue(
-            self.paths_between_all_users("S4:2", {"ownership": "B"})
-        )
+        assert self.paths_between_all_users("S4:2", {"ownership": "B"})
 
     def test_path3_4(self):
         """Tests paths between all users using constrained path algorithm,
         with the ownership constraint set to B.
         """
-        self.assertTrue(
-            self.paths_between_all_users("User1:2", {"ownership": "B"})
-        )
+        assert self.paths_between_all_users("User1:2", {"ownership": "B"})
 
     def test_path3_5(self):
         """Tests paths between all users using constrained path algorithm,
         with the ownership constraint set to B.
         """
-        self.assertTrue(
-            self.paths_between_all_users("S5:4", {"ownership": "B"})
-        )
+        assert self.paths_between_all_users("S5:4", {"ownership": "B"})
 
     def test_path3_6(self):
         """Tests paths between all users using constrained path algorithm,
         with the ownership constraint set to B.
         """
-        self.assertTrue(
-            self.paths_between_all_users("S6:2", {"ownership": "B"})
-        )
+        assert self.paths_between_all_users("S6:2", {"ownership": "B"})
 
     def test_path3_7(self):
         """Tests paths between all users using constrained path algorithm,
         with the ownership constraint set to B.
         """
-        self.assertTrue(
-            self.paths_between_all_users("S6:5", {"ownership": "B"})
-        )
+        assert self.paths_between_all_users("S6:5", {"ownership": "B"})
 
     def test_path3_8(self):
         """Tests paths between all users using constrained path algorithm,
         with the ownership constraint set to B.
         """
-        self.assertTrue(
-            self.paths_between_all_users("S10:1", {"ownership": "B"})
-        )
+        assert self.paths_between_all_users("S10:1", {"ownership": "B"})
 
     def test_path3_9(self):
         """Tests paths between all users using constrained path algorithm,
         with the ownership constraint set to B.
         """
-        self.assertTrue(
-            self.paths_between_all_users("S8:6", {"ownership": "B"})
-        )
+        assert self.paths_between_all_users("S8:6", {"ownership": "B"})
 
     def test_path3_1_0(self):
         """Tests paths between all users using constrained path algorithm,
         with the ownership constraint set to B.
         """
-        self.assertTrue(
-            self.paths_between_all_users("S10:2", {"ownership": "B"})
-        )
+        assert self.paths_between_all_users("S10:2", {"ownership": "B"})
 
     def test_path3_1_1(self):
         """Tests paths between all users using constrained path algorithm,
         with the ownership constraint set to B.
         """
-        self.assertTrue(
-            self.paths_between_all_users("S10:3", {"ownership": "B"})
-        )
+        assert self.paths_between_all_users("S10:3", {"ownership": "B"})
 
     def test_path3_1_2(self):
         """Tests paths between all users using constrained path algorithm,
         with the ownership constraint set to B.
         """
-        self.assertTrue(
-            self.paths_between_all_users("User2:1", {"ownership": "B"})
-        )
+        assert self.paths_between_all_users("User2:1", {"ownership": "B"})
 
     def test_path4_1(self):
         """Tests paths between all users using constrained path algorithm,
         with the reliability constraint set to 3.
         """
-        self.assertTrue(
-            self.paths_between_all_users("S4:1", {"reliability": 3})
-        )
+        assert self.paths_between_all_users("S4:1", {"reliability": 3})
 
     def test_path4_2(self):
         """Tests paths between all users using constrained path algorithm,
         with the reliability constraint set to 3.
         """
-        self.assertTrue(
-            self.paths_between_all_users("S5:2", {"reliability": 3})
-        )
+        assert self.paths_between_all_users("S5:2", {"reliability": 3})
 
     def test_path4_3(self):
         """Tests paths between all users using constrained path algorithm,
         with the reliability constraint set to 3.
         """
-        self.assertTrue(
-            self.paths_between_all_users("S5:3", {"reliability": 3})
-        )
+        assert self.paths_between_all_users("S5:3", {"reliability": 3})
 
     def test_path4_4(self):
         """Tests paths between all users using constrained path algorithm,
         with the reliability constraint set to 3.
         """
-        self.assertTrue(
-            self.paths_between_all_users("S6:1", {"reliability": 3})
-        )
+        assert self.paths_between_all_users("S6:1", {"reliability": 3})
 
     def test_path5_1(self):
         """Tests paths between all users using constrained path algorithm,
         with the reliability constraint set to 3.
         """
-        self.assertTrue(
-            self.paths_between_all_users("S3:1", {"bandwidth": 100})
-        )
+        assert self.paths_between_all_users("S3:1", {"bandwidth": 100})
 
     def test_path5_2(self):
         """Tests paths between all users using constrained path algorithm,
         with the reliability constraint set to 3.
         """
-        self.assertTrue(
-            self.paths_between_all_users("S5:1", {"bandwidth": 100})
-        )
+        assert self.paths_between_all_users("S5:1", {"bandwidth": 100})
 
     def test_path5_3(self):
         """Tests paths between all users using constrained path algorithm,
         with the reliability constraint set to 3.
         """
-        self.assertTrue(
-            self.paths_between_all_users("User1:4", {"bandwidth": 100})
-        )
+        assert self.paths_between_all_users("User1:4", {"bandwidth": 100})
 
     def test_path5_4(self):
         """Tests paths between all users using constrained path algorithm,
         with the reliability constraint set to 3.
         """
-        self.assertTrue(
-            self.paths_between_all_users("User4:3", {"bandwidth": 100})
-        )
+        assert self.paths_between_all_users("User4:3", {"bandwidth": 100})
 
     def test_path9(self):
         """Tests paths between all users using constrained path algorithm,
@@ -222,17 +171,17 @@ class TestPathsEdges(EdgesSettings):
         combos = combinations(["User1", "User2", "User3", "User4"], 2)
         self.initializer()
 
-        for point_a, point_b in combos:
-            results = self.graph.constrained_k_shortest_paths(
-                point_a,
-                point_b,
+        for source, destination in combos:
+            paths = self.graph.constrained_k_shortest_paths(
+                source,
+                destination,
                 mandatory_metrics={"ownership": "B"},
                 flexible={"delay": 50, "bandwidth": 100, "reliability": 3},
             )
-            for result in results:
+            for path in paths:
                 # delay = 50 checks
-                if "delay" in result["metrics"]:
-                    for path in result["hops"]:
+                if "delay" in path["metrics"]:
+                    for path in path["hops"]:
                         self.assertNotIn("S1:1", path)
                         self.assertNotIn("S2:1", path)
                         self.assertNotIn("S3:1", path)
@@ -255,24 +204,24 @@ class TestPathsEdges(EdgesSettings):
                         self.assertNotIn("User4:3", path)
 
                 # bandwidth = 100 checks
-                if "bandwidth" in result["metrics"]:
-                    for path in result["hops"]:
+                if "bandwidth" in path["metrics"]:
+                    for path in path["hops"]:
                         self.assertNotIn("S3:1", path)
                         self.assertNotIn("S5:1", path)
                         self.assertNotIn("User1:4", path)
                         self.assertNotIn("User4:3", path)
 
                 # reliability = 3 checks
-                if "reliability" in result["metrics"]:
-                    for path in result["hops"]:
+                if "reliability" in path["metrics"]:
+                    for path in path["hops"]:
                         self.assertNotIn("S4:1", path)
                         self.assertNotIn("S5:2", path)
                         self.assertNotIn("S5:3", path)
                         self.assertNotIn("S6:1", path)
 
                 # ownership = "B" checks
-                self.assertIn("ownership", result["metrics"])
-                for path in result["hops"]:
+                self.assertIn("ownership", path["metrics"])
+                for path in path["hops"]:
                     self.assertNotIn("S4:1", path)
                     self.assertNotIn("S5:2", path)
                     self.assertNotIn("S4:2", path)
