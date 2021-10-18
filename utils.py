@@ -15,19 +15,17 @@ def lazy_filter(filter_type, filter_func):
 
 
 def nx_edge_data_weight(u, v, edge_data):
-    """Helper function callback meant to be used with nx.dijkstra_path or
-    all_shortest_paths, and similar methods providing a way to fallback to
-    a default value"""
+    """Helper function callback meant to be used with nx shortest path methods
+    that take a weight callback, providing a fallback default value"""
 
-    if edge_data.get("weight"):
-        return edge_data["weight"]
+    if edge_data.get("hop"):
+        return edge_data["hop"]
     return 1
 
 
 def nx_edge_data_delay(u, v, edge_data):
-    """Helper function callback meant to be used with nx.dijkstra_path or
-    all_shortest_paths, and similar methods providing a way to fallback to
-    a default value"""
+    """Helper function callback meant to be used with nx shortest path methods
+    that take a weight callback, providing a fallback default value"""
 
     if edge_data.get("delay"):
         return edge_data["delay"]
@@ -35,9 +33,8 @@ def nx_edge_data_delay(u, v, edge_data):
 
 
 def nx_edge_data_priority(u, v, edge_data):
-    """Helper function callback meant to be used with nx.dijkstra_path or
-    all_shortest_paths, and similar methods providing a way to fallback to
-    a default value"""
+    """Helper function callback meant to be used with nx shortest path methods
+    that take a weight callback, providing a fallback default value"""
 
     if edge_data.get("priority"):
         return edge_data["priority"]
