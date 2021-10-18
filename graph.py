@@ -1,20 +1,16 @@
 """Module Graph of kytos/pathfinder Kytos Network Application."""
 
-from itertools import combinations
-from itertools import islice
+from itertools import combinations, islice
 
 from kytos.core import log
-from napps.kytos.pathfinder.utils import lazy_filter
-from napps.kytos.pathfinder.utils import nx_edge_data_delay
-from napps.kytos.pathfinder.utils import nx_edge_data_priority
-from napps.kytos.pathfinder.utils import nx_edge_data_weight
-from napps.kytos.pathfinder.utils import filter_le
-from napps.kytos.pathfinder.utils import filter_ge
-from napps.kytos.pathfinder.utils import filter_in
+from napps.kytos.pathfinder.utils import (filter_ge, filter_in, filter_le,
+                                          lazy_filter, nx_edge_data_delay,
+                                          nx_edge_data_priority,
+                                          nx_edge_data_weight)
 
 try:
     import networkx as nx
-    from networkx.exception import NodeNotFound, NetworkXNoPath
+    from networkx.exception import NetworkXNoPath, NodeNotFound
 except ImportError:
     PACKAGE = "networkx>=2.2"
     log.error(f"Package {PACKAGE} not found. Please 'pip install {PACKAGE}'")
@@ -114,7 +110,7 @@ class KytosGraph:
                 paths_acc.append(path)
             else:
                 raise TypeError(
-                    f"path type: '{type(path)}' must be be either list or dict. "
+                    f"type: '{type(path)}' must be be either list or dict. "
                     f"path: {path}"
                 )
         return paths_acc
@@ -125,9 +121,10 @@ class KytosGraph:
         """Compute up to k shortest paths and return them.
         This procedure is based on algorithm by Jin Y. Yen [1].
 
-        Since Yen's algorithm calls Dijkstra's up to k times, the time complexity
-        will be proportional to K * Dijkstra's, average O(K(|V| + |E|)logV), assuming
-        it's using a heap, where V is the number of vertices and E number of egdes.
+        Since Yen's algorithm calls Dijkstra's up to k times, the time
+        complexity will be proportional to K * Dijkstra's, average
+        O(K(|V| + |E|)logV), assuming it's using a heap, where V is the
+        number of vertices and E number of egdes.
 
         References
         ----------
@@ -139,7 +136,10 @@ class KytosGraph:
             return list(
                 islice(
                     nx.shortest_simple_paths(
-                        graph or self.graph, source, destination, weight=weight
+                        graph or self.graph,
+                        source,
+                        destination,
+                        weight=weight,
                     ),
                     k,
                 )

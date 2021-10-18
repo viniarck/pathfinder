@@ -1,4 +1,4 @@
-"""Module to overwrite all the needed methods to test the KytosGraph in graph.py"""
+"""Module to overwrite all the needed methods"""
 from itertools import combinations
 
 # Core modules to import

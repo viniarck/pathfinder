@@ -236,8 +236,6 @@ class TestMain(TestCase):
 
         response = api.open(url, method="POST", json=data)
 
-        # TODO review the number of paths found, validate with max number
-
         for path in response.json["paths"]:
             assert source == path["hops"][0]
             assert destination == path["hops"][-1]
@@ -249,7 +247,8 @@ class TestMain(TestCase):
         api = get_test_client(self.napp.controller, self.napp)
 
         with patch(
-            "napps.kytos.pathfinder.graph.KytosGraph.constrained_k_shortest_paths",
+            "napps.kytos.pathfinder.graph.KytosGraph."
+            "constrained_k_shortest_paths",
             side_effect=side_effect,
         ):
             url = "http://127.0.0.1:8181/api/kytos/pathfinder/v2/"

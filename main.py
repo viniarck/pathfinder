@@ -3,10 +3,9 @@
 from flask import jsonify, request
 from kytos.core import KytosNApp, log, rest
 from kytos.core.helpers import listen_to
-
+from napps.kytos.pathfinder.graph import KytosGraph
 # pylint: disable=import-error
 from werkzeug.exceptions import BadRequest
-from napps.kytos.pathfinder.graph import KytosGraph
 
 
 class Main(KytosNApp):
@@ -85,18 +84,18 @@ class Main(KytosNApp):
         if data.get("desired_links"):
             if not isinstance(data["desired_links"], list):
                 raise BadRequest(
-                    f"TypeError: desired_links is supposed to be a list. type: "
-                    f"{type(data['desired_links'])}"
+                    f"TypeError: desired_links is supposed to be a list."
+                    f" type: {type(data['desired_links'])}"
                 )
 
         if data.get("undesired_links"):
             if not isinstance(data["undesired_links"], list):
                 raise BadRequest(
-                    f"TypeError: undesired_links is supposed to be a list. type: "
-                    f"{type(data['undesired_links'])}"
+                    f"TypeError: undesired_links is supposed to be a list."
+                    f" type: {type(data['undesired_links'])}"
                 )
 
-        parameter = data.get("parameter")  # TODO add note to deprecate
+        parameter = data.get("parameter")
         spf_attr = data.get("spf_attribute")
         if not spf_attr:
             spf_attr = parameter or "hop"
@@ -122,7 +121,8 @@ class Main(KytosNApp):
                 data["spf_max_path_cost"] = spf_max_path_cost
             except (TypeError, ValueError):
                 raise BadRequest(
-                    f"spf_max_path_cost {data.get('spf_max_path_cost')} must be an int"
+                    f"spf_max_path_cost {data.get('spf_max_path_cost')} must"
+                    " be an int"
                 )
 
         data["mandatory_metrics"] = data.get("mandatory_metrics", {})
@@ -137,7 +137,8 @@ class Main(KytosNApp):
             data["minimum_flexible_hits"] = minimum_hits
         except (TypeError, ValueError):
             raise BadRequest(
-                f"minimum_hits {data.get('minimum_flexible_hits')} must be an int"
+                f"minimum_hits {data.get('minimum_flexible_hits')} must"
+                " be an int"
             )
 
         return data
@@ -190,11 +191,7 @@ class Main(KytosNApp):
 
     @listen_to("kytos.topology.updated")
     def update_topology(self, event):
-        """
-        Update the graph when the network topology was updated.
-
-        Clear the current graph and create a new with the most topology updated.
-        """
+        """Update the graph when the network topology is updated."""
         if "topology" not in event.content:
             return
         try:
@@ -203,6 +200,4 @@ class Main(KytosNApp):
             self.graph.update_topology(topology)
             log.debug("Topology graph updated.")
         except TypeError as err:
-            log.debug(err)
-        except Exception as err:
             log.debug(err)
