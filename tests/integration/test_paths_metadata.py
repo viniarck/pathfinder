@@ -15,7 +15,9 @@ class TestPathsMetadata(MetadataSettings):
 
         source = "User1"
         destination = "User2"
-        paths = self.graph.constrained_k_shortest_paths(source, destination, k=1)
+        paths = self.graph.constrained_k_shortest_paths(
+            source, destination, k=1
+        )
         assert len(paths) == 1
 
         for path in paths:
@@ -28,7 +30,9 @@ class TestPathsMetadata(MetadataSettings):
 
         source = "User1"
         destination = "User2"
-        paths = self.graph.constrained_k_shortest_paths(source, destination, k=2)
+        paths = self.graph.constrained_k_shortest_paths(
+            source, destination, k=2
+        )
         assert len(paths) == 2
 
         for path in paths:
@@ -41,7 +45,9 @@ class TestPathsMetadata(MetadataSettings):
 
         source = "User1"
         destination = "User2"
-        paths = self.graph.constrained_k_shortest_paths(source, destination, k=4)
+        paths = self.graph.constrained_k_shortest_paths(
+            source, destination, k=4
+        )
         assert len(paths) == 4
 
         for path in paths:
@@ -165,7 +171,9 @@ class TestPathsMetadata(MetadataSettings):
                 for i in range(1, len(path)):
                     endpoint_a = path[i - 1]
                     endpoint_b = path[i]
-                    meta_data = self.graph.get_link_metadata(endpoint_a, endpoint_b)
+                    meta_data = self.graph.get_link_metadata(
+                        endpoint_a, endpoint_b
+                    )
                     if meta_data and "reliability" in meta_data.keys():
                         reliabilities.append(meta_data["reliability"])
 
@@ -189,10 +197,14 @@ class TestPathsMetadata(MetadataSettings):
         assert paths
 
         for path in paths:
-            for i, j in zip(range(0, len(path["hops"])), range(1, len(path["hops"]))):
+            for i, j in zip(
+                range(0, len(path["hops"])), range(1, len(path["hops"]))
+            ):
                 endpoint_a = path["hops"][i]
                 endpoint_b = path["hops"][j]
-                meta_data = self.graph.get_link_metadata(endpoint_a, endpoint_b)
+                meta_data = self.graph.get_link_metadata(
+                    endpoint_a, endpoint_b
+                )
                 if meta_data and "delay" in meta_data.keys():
                     delays.append(meta_data["delay"])
 
@@ -203,7 +215,9 @@ class TestPathsMetadata(MetadataSettings):
     def links_metadata_values(self, path, attr):
         """Method to build a list of metadata values of the links of a path"""
         values = []
-        for i, j in zip(range(0, len(path["hops"])), range(1, len(path["hops"]))):
+        for i, j in zip(
+            range(0, len(path["hops"])), range(1, len(path["hops"]))
+        ):
             endpoint_a = path["hops"][i]
             endpoint_b = path["hops"][j]
             meta_data = self.graph.get_link_metadata(endpoint_a, endpoint_b)

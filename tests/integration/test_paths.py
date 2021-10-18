@@ -14,7 +14,9 @@ class TestPaths(TestCase):
     def initializer(self, val=0):
         """Test setup for a specific topology"""
 
-        method_name = "generate_topology" if not val else "generate_topology_" + str(val)
+        method_name = (
+            "generate_topology" if not val else "generate_topology_" + str(val)
+        )
         method = getattr(self, method_name)
         method()
         switches, links = method()
@@ -51,7 +53,8 @@ class TestPaths(TestCase):
         compounded = "{}|{}".format(interface_a, interface_b)
         final_name = compounded
         links[final_name] = Link(
-            interfaces[interface_a], interfaces[interface_b])
+            interfaces[interface_a], interfaces[interface_b]
+        )
 
     @staticmethod
     def add_metadata_to_link(interface_a, interface_b, metrics, links):

@@ -21,7 +21,7 @@ class TestLazyFilter(TestCase):
             list(filtered(minimum, items))
 
     def test_filter_functions_in(self):
-        """Test _filter_function that are expected to use the filter_in"""""
+        """Test _filter_function that are expected to use the filter_in""" ""
 
         attr = "ownership"
         nx_edge_values = [
@@ -43,7 +43,7 @@ class TestLazyFilter(TestCase):
         for attr in ("bandwidth", "reliability"):
             nx_edge_values = [
                 (None, None, {attr: 20}),
-                (None, None, {attr: 10})
+                (None, None, {attr: 10}),
             ]
 
             target = 15
@@ -65,7 +65,7 @@ class TestLazyFilter(TestCase):
         for attr in ("priority", "delay", "utilization"):
             nx_edge_values = [
                 (None, None, {attr: 20}),
-                (None, None, {attr: 10})
+                (None, None, {attr: 10}),
             ]
 
             target = 15
@@ -80,4 +80,3 @@ class TestLazyFilter(TestCase):
             filter_func = self.graph._filter_functions[attr]
             filtered = list(filter_func(target, nx_edge_values))
             assert not filtered
-

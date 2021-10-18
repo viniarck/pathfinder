@@ -62,12 +62,16 @@ class TestMain(TestCase):
         }
         response = api.open(url, method="POST", json=data)
 
-        expected_response = {"paths": [{"hops": path, "cost": cost_mocked_value}]}
+        expected_response = {
+            "paths": [{"hops": path, "cost": cost_mocked_value}]
+        }
         self.assertEqual(response.json, expected_response)
 
     @patch("napps.kytos.pathfinder.graph.KytosGraph._path_cost")
     @patch("napps.kytos.pathfinder.graph.KytosGraph.k_shortest_paths")
-    def test_shortest_path_response_status_code(self, mock_shortest_paths, path_cost):
+    def test_shortest_path_response_status_code(
+        self, mock_shortest_paths, path_cost
+    ):
         """Test shortest path."""
         path_cost.return_value = 1
         api, _ = self.setting_shortest_path_mocked(mock_shortest_paths)
@@ -121,7 +125,11 @@ class TestMain(TestCase):
         """Test constrained flexible paths."""
         cost_mocked_value = 1
         path_cost.return_value = cost_mocked_value
-        response, metrics, path = self.setting_shortest_constrained_path_mocked(
+        (
+            response,
+            metrics,
+            path,
+        ) = self.setting_shortest_constrained_path_mocked(
             mock_constrained_k_shortest_paths
         )
         expected_response = [
@@ -149,7 +157,14 @@ class TestMain(TestCase):
     def test_filter_paths_response_on_desired(self):
         """Test filter paths."""
         self.napp._topology = get_topology_mock()
-        paths = [{"hops": ["00:00:00:00:00:00:00:01:1", "00:00:00:00:00:00:00:02:1"]}]
+        paths = [
+            {
+                "hops": [
+                    "00:00:00:00:00:00:00:01:1",
+                    "00:00:00:00:00:00:00:02:1",
+                ]
+            }
+        ]
         desired, undesired = ["1"], None
 
         filtered_paths = self.napp._filter_paths(paths, desired, undesired)
@@ -169,7 +184,7 @@ class TestMain(TestCase):
                     "00:00:00:00:00:00:00:04",
                     "00:00:00:00:00:00:00:04:1",
                 ],
-                "cost": 6
+                "cost": 6,
             },
             {
                 "hops": [
@@ -178,8 +193,8 @@ class TestMain(TestCase):
                     "00:00:00:00:00:00:00:04",
                     "00:00:00:00:00:00:00:04:1",
                 ],
-                "cost": 3
-            }
+                "cost": 3,
+            },
         ]
         filtered_paths = self.napp._filter_paths_le_cost(paths, 3)
         assert len(filtered_paths) == 1
@@ -188,7 +203,14 @@ class TestMain(TestCase):
     def test_filter_paths_response_on_undesired(self):
         """Test filter paths."""
         self.napp._topology = get_topology_mock()
-        paths = [{"hops": ["00:00:00:00:00:00:00:01:2", "00:00:00:00:00:00:00:03:1"]}]
+        paths = [
+            {
+                "hops": [
+                    "00:00:00:00:00:00:00:01:2",
+                    "00:00:00:00:00:00:00:03:1",
+                ]
+            }
+        ]
         desired, undesired = None, ["2"]
         filtered_paths = self.napp._filter_paths(paths, desired, undesired)
         self.assertEqual(filtered_paths, [])

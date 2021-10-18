@@ -62,7 +62,9 @@ class KytosGraph:
                     self.graph.add_edge(node.id, interface.id)
 
             except AttributeError:
-                raise TypeError("Problems encountered updating nodes inside the graph")
+                raise TypeError(
+                    "Problems encountered updating nodes inside the graph"
+                )
 
     def update_links(self, links):
         """Update all links inside the graph."""
@@ -117,7 +119,9 @@ class KytosGraph:
                 )
         return paths_acc
 
-    def k_shortest_paths(self, source, destination, weight=None, k=1, graph=None):
+    def k_shortest_paths(
+        self, source, destination, weight=None, k=1, graph=None
+    ):
         """Compute up to k shortest paths and return them.
         This procedure is based on algorithm by Jin Y. Yen [1].
 
@@ -144,13 +148,21 @@ class KytosGraph:
             return []
 
     def constrained_k_shortest_paths(
-        self, source, destination, weight=None, k=1, minimum_hits=None, **metrics
+        self,
+        source,
+        destination,
+        weight=None,
+        k=1,
+        minimum_hits=None,
+        **metrics,
     ):
         """Calculate the constrained shortest paths with flexibility."""
         mandatory_metrics = metrics.get("mandatory_metrics", {})
         flexible_metrics = metrics.get("flexible_metrics", {})
         first_pass_links = list(
-            self._filter_links(self.graph.edges(data=True), **mandatory_metrics)
+            self._filter_links(
+                self.graph.edges(data=True), **mandatory_metrics
+            )
         )
         length = len(flexible_metrics)
         if minimum_hits is None:
@@ -161,7 +173,9 @@ class KytosGraph:
         for i in range(length, minimum_hits - 1, -1):
             for combo in combinations(flexible_metrics.items(), i):
                 additional = dict(combo)
-                filtered_links = self._filter_links(first_pass_links, **additional)
+                filtered_links = self._filter_links(
+                    first_pass_links, **additional
+                )
                 filtered_links = ((u, v) for u, v, d in filtered_links)
                 for path in self.k_shortest_paths(
                     source,
@@ -171,7 +185,10 @@ class KytosGraph:
                     graph=self.graph.edge_subgraph(filtered_links),
                 ):
                     paths.append(
-                        {"hops": path, "metrics": {**mandatory_metrics, **additional}}
+                        {
+                            "hops": path,
+                            "metrics": {**mandatory_metrics, **additional},
+                        }
                     )
                 if len(paths) == k:
                     return paths
@@ -186,5 +203,7 @@ class KytosGraph:
                 try:
                     links = filter_func(value, links)
                 except TypeError as err:
-                    raise TypeError(f"Error in {metric} value: {value} err: {err}")
+                    raise TypeError(
+                        f"Error in {metric} value: {value} err: {err}"
+                    )
         return links

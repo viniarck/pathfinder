@@ -2,8 +2,11 @@
 
 from unittest.mock import MagicMock
 
-from kytos.lib.helpers import (get_interface_mock, get_link_mock,
-                               get_switch_mock)
+from kytos.lib.helpers import (
+    get_interface_mock,
+    get_link_mock,
+    get_switch_mock,
+)
 
 from kytos.core.interface import Interface
 from kytos.core.switch import Switch
@@ -25,12 +28,18 @@ def get_topology_mock():
     interface_c1 = get_interface_mock("s3-eth1", 1, switch_c)
     interface_c2 = get_interface_mock("s3-eth2", 2, switch_c)
 
-    switch_a.interfaces = {interface_a1.id: interface_a1,
-                           interface_a2.id: interface_a2}
-    switch_b.interfaces = {interface_b1.id: interface_b1,
-                           interface_b2.id: interface_b2}
-    switch_c.interfaces = {interface_c1.id: interface_c1,
-                           interface_c2.id: interface_c2}
+    switch_a.interfaces = {
+        interface_a1.id: interface_a1,
+        interface_a2.id: interface_a2,
+    }
+    switch_b.interfaces = {
+        interface_b1.id: interface_b1,
+        interface_b2.id: interface_b2,
+    }
+    switch_c.interfaces = {
+        interface_c1.id: interface_c1,
+        interface_c2.id: interface_c2,
+    }
 
     link_1 = get_link_mock(interface_a1, interface_b1)
     link_2 = get_link_mock(interface_a2, interface_c1)
@@ -38,37 +47,64 @@ def get_topology_mock():
 
     topology = MagicMock()
     topology.links = {"1": link_1, "2": link_2, "3": link_3}
-    topology.switches = {switch_a.dpid: switch_a,
-                         switch_b.dpid: switch_b,
-                         switch_c.dpid: switch_c}
+    topology.switches = {
+        switch_a.dpid: switch_a,
+        switch_b.dpid: switch_b,
+        switch_c.dpid: switch_c,
+    }
     return topology
 
 
 def topology_setting():
     """Set the default values associated
     to a "real" topology."""
-    switches_to_interface_counts = {"S1": 2, "S2": 2, "S3": 6, "S4": 2,
-                                    "S5": 6, "S6": 5, "S7": 2, "S8": 8,
-                                    "S9": 4, "S10": 3, "S11": 3,
-                                    "User1": 4, "User2": 2,
-                                    "User3": 2, "User4": 3}
+    switches_to_interface_counts = {
+        "S1": 2,
+        "S2": 2,
+        "S3": 6,
+        "S4": 2,
+        "S5": 6,
+        "S6": 5,
+        "S7": 2,
+        "S8": 8,
+        "S9": 4,
+        "S10": 3,
+        "S11": 3,
+        "User1": 4,
+        "User2": 2,
+        "User3": 2,
+        "User4": 3,
+    }
 
-    links_to_interfaces = [["S1:1", "S2:1"], ["S1:2", "User1:1"],
-                           ["S2:2", "User4:1"], ["S3:1", "S5:1"],
-                           ["S3:2", "S7:1"], ["S3:3", "S8:1"],
-                           ["S3:4", "S11:1"],
-                           ["S3:5", "User3:1"], ["S3:6", "User4:2"],
-                           ["S4:1", "S5:2"], ["S4:2", "User1:2"],
-                           ["S5:3", "S6:1"],
-                           ["S5:4", "S6:2"], ["S5:5", "S8:2"],
-                           ["S5:6", "User1:3"], ["S6:3", "S9:1"],
-                           ["S6:4", "S9:2"], ["S6:5", "S10:1"],
-                           ["S7:2", "S8:3"],
-                           ["S8:4", "S9:3"], ["S8:5", "S9:4"],
-                           ["S8:6", "S10:2"],
-                           ["S8:7", "S11:2"], ["S8:8", "User3:2"],
-                           ["S10:3", "User2:1"], ["S11:3", "User2:2"],
-                           ["User1:4", "User4:3"]]
+    links_to_interfaces = [
+        ["S1:1", "S2:1"],
+        ["S1:2", "User1:1"],
+        ["S2:2", "User4:1"],
+        ["S3:1", "S5:1"],
+        ["S3:2", "S7:1"],
+        ["S3:3", "S8:1"],
+        ["S3:4", "S11:1"],
+        ["S3:5", "User3:1"],
+        ["S3:6", "User4:2"],
+        ["S4:1", "S5:2"],
+        ["S4:2", "User1:2"],
+        ["S5:3", "S6:1"],
+        ["S5:4", "S6:2"],
+        ["S5:5", "S8:2"],
+        ["S5:6", "User1:3"],
+        ["S6:3", "S9:1"],
+        ["S6:4", "S9:2"],
+        ["S6:5", "S10:1"],
+        ["S7:2", "S8:3"],
+        ["S8:4", "S9:3"],
+        ["S8:5", "S9:4"],
+        ["S8:6", "S10:2"],
+        ["S8:7", "S11:2"],
+        ["S8:8", "User3:2"],
+        ["S10:3", "User2:1"],
+        ["S11:3", "User2:2"],
+        ["User1:4", "User4:3"],
+    ]
 
     links_to_metadata = [
         {"reliability": 5, "bandwidth": 100, "delay": 105},
@@ -97,7 +133,8 @@ def topology_setting():
         {"reliability": 5, "bandwidth": 100, "delay": 1},
         {"reliability": 3, "bandwidth": 100, "delay": 10, "ownership": "A"},
         {"reliability": 3, "bandwidth": 100, "delay": 6},
-        {"reliability": 5, "bandwidth": 10, "delay": 105}]
+        {"reliability": 5, "bandwidth": 10, "delay": 105},
+    ]
 
     return links_to_interfaces, links_to_metadata, switches_to_interface_counts
 
@@ -109,7 +146,11 @@ def get_topology_with_metadata_mock():
     links = {}
     i = 0
 
-    links_to_interfaces, links_to_metadata, switches_to_interface_counts = topology_setting()
+    (
+        links_to_interfaces,
+        links_to_metadata,
+        switches_to_interface_counts,
+    ) = topology_setting()
 
     for switch in switches_to_interface_counts:
         switches[switch] = get_switch_mock(switch)
@@ -139,7 +180,11 @@ def get_topology_with_metadata():
     interfaces = {}
     links = {}
 
-    links_to_interfaces, links_to_metadata, switches_to_interface_counts = topology_setting()
+    (
+        links_to_interfaces,
+        links_to_metadata,
+        switches_to_interface_counts,
+    ) = topology_setting()
 
     for switch in switches_to_interface_counts:
         switches[switch] = Switch(switch)
@@ -180,4 +225,6 @@ def get_filter_links_fake(links, metadata=True, **metrics):
     if not metadata:
         return filtered_links_without_metadata
     return filtered_links
+
+
 # pylint: enable=unused-argument

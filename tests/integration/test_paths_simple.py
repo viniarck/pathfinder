@@ -111,12 +111,18 @@ class TestPathsSimple(TestPaths):
         TestPaths.create_switch("S5", switches)
 
         links["S1:1<->S2:1"] = Link(interfaces["S1:1"], interfaces["S2:1"])
-        links["S1:1<->S2:1"].extend_metadata({"bandwidth": 50, "ownership": "red"})
+        links["S1:1<->S2:1"].extend_metadata(
+            {"bandwidth": 50, "ownership": "red"}
+        )
 
         links["S3:1<->S2:2"] = Link(interfaces["S3:1"], interfaces["S2:2"])
-        links["S3:1<->S2:2"].extend_metadata({"bandwidth": 51, "ownership": "blue"})
+        links["S3:1<->S2:2"].extend_metadata(
+            {"bandwidth": 51, "ownership": "blue"}
+        )
 
         links["S1:2<->S3:2"] = Link(interfaces["S1:2"], interfaces["S3:2"])
-        links["S1:2<->S3:2"].extend_metadata({"bandwidth": 49, "ownership": "blue"})
+        links["S1:2<->S3:2"].extend_metadata(
+            {"bandwidth": 49, "ownership": "blue"}
+        )
 
         return switches, links
