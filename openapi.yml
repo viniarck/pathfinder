@@ -10,7 +10,7 @@ info:
   * Destination\n
   * Constraints\n
   
-The Kytos Pathfinder repository can be found [here.](https://github.com/kytos/pathfinder)\n
+Kytos Pathfinder repository can be found [here.](https://github.com/kytos-ng/pathfinder)\n
 ## Overview\n
 This API uses HTTP POST requests with JSON arguments and JSON responses."
 
@@ -21,34 +21,24 @@ paths:
   /api/kytos/pathfinder/v2/:
     post:
       summary: Returns best paths between the source and destination.
-      description: "Returns a list of best paths between source and destination, in order. These best paths, namely their metadata, meet standards set by the user.\n
+      description: "Returns a list of k best paths between source and destination, in order.\n
       
-        _Standards_, or _Constraints_, are optional, user-specified attributes that best paths will have. The following is an example of a constraint that this API supports:\n
+        _Constraints_, are optional, user-specified attributes that best paths will have. \n
+
+        The following is an example of link constraints that is supported:\n
         
-            - Bandwidth must be at least **34** units\n
-            - Delay must be at most **45** units\n
-            - Owner must be **Joe**.\n
-            - Reliability can be at least **3** units, or utilization can be at most **32** units, or both.\n
-            - Path must have links **A** and **B**.\n
-            - Path must not have link **C**.\n
-        
-        A path's metadata is the set of data names and corresponding values that each of its edges holds. The following edge data are currently supported:\n
             - Bandwidth\n
             - Delay\n
+            - Owner\n
             - Reliability\n
-            - Utilization\n
-            - Priority\n
-            - Ownership\n
-        
-        A path has an attribute if each of its edges has that attribute. For example, if a path's metadata has the attribute `bandwidth is at least 50 units`, then each of its edges has a bandwidth of **50** units or higher.\n
-        
-        To see the connection between a user's standards and a path's metadata, assume a path has two edges **A** and **B**, with the following metadata:\n
-            - A: bandwidth **44**, delay **56**\n
-            - B: bandwidth **22**, delay **38**\n
-        
-        If the user is looking for a path with attribute `delay is at most 60 units`, this path will appear in the search results since edges **A** and **B** have delays that are at most **60** units.\n
-        
-        If the user is looking for a path with attribute `delay is at most 55 units`, however, this path will ***not*** appear in the search results since edge **A** lacks a delay that is at most **55** units.\n"
+            - Path must have links\n
+            - Path must not have links\n
+
+        In addition, this API also exposes general SPF configuration options that you could leverage:\n
+
+            - Link medata attribute that will be used as link cost by SPF\n
+            - Maximum number of best paths to be computed\n
+            - Maximum accumulated path cost to be consireded a best path\n"
 
       tags:
         - Paths
@@ -84,12 +74,30 @@ paths:
                     - "f13e8308-ecb2-49be-b507-3823af9cc409"
                     - "ee8d9017-1efd-49ac-9149-4cbeea86f751"
                     - "a3723e31-bdd3-4102-8b1a-c9fbde6d301a"
-                base_metrics:
+                spf_attribute:
+                  type: string
+                  description: Link medata attribute that will be used as link cost by SPF.
+                  default: "hop"
+                  enum: 
+                    - "hop"
+                    - "delay"
+                    - "priority"
+                spf_max_paths:
+                  type: integer
+                  description: Maximum number of 'k' best paths that should be computed by SPF. The lower the value the faster it is going to compute. If you only need a single best path, you should set this value as 1.
+                  default: 2
+                  minimum: 1
+                  maximum: 8
+                spf_max_path_cost:
+                  type: number
+                  description: Maximum accumulated path cost to be consireded a best path. You should only set this value if you want to set an upper bound accumulated cost.
+                  minimum: 1
+                mandatory_metrics:
                   description: Constraint in the form of a set that contains attributes. Paths will have every attribute specified in this set.
                   allOf:
                     - $ref: "#/components/schemas/Attributes"
                   example:
-                    bandwidth: 30.5
+                    bandwidth: 100
                     ownership: "Bill"
                 flexible_metrics:
                   description: Constraint in the form of a set that contains attributes. Paths will have a user-specified minimum number of attributes specified in this set.
@@ -97,7 +105,7 @@ paths:
                     - $ref: "#/components/schemas/Attributes"
                   example:
                     delay: 81
-                    utilization: 30.5
+                    utilization: 100
                     reliability: 3
                 minimum_flexible_hits:
                   type: integer
@@ -105,6 +113,10 @@ paths:
                   example: 2
                   minimum: 1
                   maximum: 6
+                parameter:
+                  type: string
+                  example: "hop"
+                  description: "Link medata attribute that will be used as link cost by SPF. Please use spf_attribute instead, this parameter will be deprecated in the future."
               required:
                 - source
                 - destination
@@ -117,31 +129,14 @@ paths:
               schema:
                 type: object
                 properties:
-                  0:
-                    type: object
-                    properties:
-                      metrics:
-                        description: Path attributes that meet a user's standards.
-                        allOf:
-                          - $ref: "#/components/schemas/Attributes"
-                      paths:
-                        type: array
-                        description: Best paths found
-                        items:
-                          $ref: "#/components/schemas/Path"
+                  paths:
+                    $ref: "#/components/schemas/Paths"
         400:
           description: Illegal value provided.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/badRequest"
-              examples:
-                Illegal bandwidth value:
-                  value:
-                    error: "Error in bandwidth value: Expected type: (<class 'int'>, <class 'float'>)"
-                Illegal ownership value:
-                  value:
-                    error: "Error in ownership value: Expected type: (<class 'str'>)"
+                $ref: "#/components/schemas/BadRequest"
 
 components:
   schemas:
@@ -149,15 +144,31 @@ components:
       type: string
       description: Hop identification. Usually is a `switch.id:interface.id`.
       example: 00:00:00:00:00:00:00:01:3
-      
+
     Link:
       type: string
       description: Link identification.
       example: f13e8308-ecb2-49be-b507-3823af9cc409
-      
+
     Path:
+      type: object
+      properties:
+        cost:
+          type: number
+          description: Path cost
+          example: 100
+        hops:
+          allOf:
+            - $ref: "#/components/schemas/Hops"
+      
+    Paths:
       type: array
-      description: Hops between two points
+      items:
+        $ref: "#/components/schemas/Path"
+
+    Hops:
+      type: array
+      description: Path hops
       items:
         $ref: "#/components/schemas/Hop"
       example:
@@ -170,42 +181,43 @@ components:
       properties:
         bandwidth:
           type: number
-          description: Minimum bandwidth attribute.
-          example: 36.2
-          minimum: 0
-          maximum: 100
+          description: Minimum speed of the link in Gbps. It should be a positive float number.
+          example: 100
+          minimum: 0.1
         utilization:
           type: number
-          description: Maximum utilization attribute.
-          example: 58
+          description: Maximum average percentage of utilization of the link. Utilization as 100 means the link does not have capacity left.
+          example: 70
           minimum: 0
           maximum: 100
         priority:
           type: number
-          description: Minimum priority attribute.
-          example: 81
+          description: Maximum priority of the link. The priority of the link could be set based on certain administrative traffic-engineering criteria. 
+          example: 1
           minimum: 0
-          maximum: 100
         reliability:
           type: number
-          description: Minimum reliability attribute.
-          example: 42
-          minimum: 0
+          description: Minimum percentage of the reliability of the link. Reliability as 0 means always down.
+          example: 95
+          minimum: 1
           maximum: 100
         delay:
           type: number
-          description: Maximum delay attribute.
-          example: 58.72
-          minimum: 0
-          maximum: 100
+          description: Maximum propagation delay of the link in milliseconds. It should be a positive float number.
+          example: 200
+          minimum: 0.1
         ownership:
           type: string
-          description: Exact owner attribute.
+          description: The exact user who should have ownership or be authorized to use the link.
           example: "Bill"
           
-    badRequest:
+    BadRequest:
       title: Bad Request
       type: object
       properties:
-          error:
+          code:
+              type: integer
+          description:
+              type: string
+          name:
               type: string
