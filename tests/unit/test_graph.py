@@ -10,7 +10,7 @@ from tests.helpers import get_topology_mock
 class TestGraph(TestCase):
     """Tests for the Main class."""
 
-    @patch('networkx.Graph')
+    @patch("networkx.Graph")
     def setUp(self, mock_graph):
         """Execute steps before each tests."""
         self.mock_graph = mock_graph.return_value
@@ -22,8 +22,8 @@ class TestGraph(TestCase):
 
         self.mock_graph.clear.assert_called()
 
-    @patch('napps.kytos.pathfinder.graph.KytosGraph.update_links')
-    @patch('napps.kytos.pathfinder.graph.KytosGraph.update_nodes')
+    @patch("napps.kytos.pathfinder.graph.KytosGraph.update_links")
+    @patch("napps.kytos.pathfinder.graph.KytosGraph.update_nodes")
     def test_update_topology(self, *args):
         """Test update topology."""
         (mock_update_nodes, mock_update_links) = args
@@ -41,15 +41,18 @@ class TestGraph(TestCase):
         switch = topology.switches["00:00:00:00:00:00:00:01"]
 
         calls = [call(switch.id)]
-        calls += [call(interface.id)
-                  for interface in switch.interfaces.values()]
+        calls += [
+            call(interface.id) for interface in switch.interfaces.values()
+        ]
         self.mock_graph.add_node.assert_has_calls(calls)
 
-        calls = [call(switch.id, interface.id)
-                 for interface in switch.interfaces.values()]
+        calls = [
+            call(switch.id, interface.id)
+            for interface in switch.interfaces.values()
+        ]
         self.mock_graph.add_edge.assert_has_calls(calls)
 
-    @patch('napps.kytos.pathfinder.graph.KytosGraph._set_default_metadata')
+    @patch("napps.kytos.pathfinder.graph.KytosGraph._set_default_metadata")
     def test_update_links(self, mock_set_default_metadata):
         """Test update nodes."""
         topology = get_topology_mock()
@@ -63,22 +66,28 @@ class TestGraph(TestCase):
 
     def test_remove_switch_hops(self):
         """Test remove switch hops."""
-        circuit = {"hops": ["00:00:00:00:00:00:00:01:1",
-                            "00:00:00:00:00:00:00:01",
-                            "00:00:00:00:00:00:00:01:2"]}
+        circuit = {
+            "hops": [
+                "00:00:00:00:00:00:00:01:1",
+                "00:00:00:00:00:00:00:01",
+                "00:00:00:00:00:00:00:01:2",
+            ]
+        }
 
         self.kytos_graph._remove_switch_hops(circuit)
 
-        expected_circuit = {"hops": ["00:00:00:00:00:00:00:01:1",
-                                     "00:00:00:00:00:00:00:01:2"]}
+        expected_circuit = {
+            "hops": ["00:00:00:00:00:00:00:01:1", "00:00:00:00:00:00:00:01:2"]
+        }
         self.assertEqual(circuit, expected_circuit)
 
-    @patch('networkx.shortest_simple_paths', return_value=["any"])
+    @patch("networkx.shortest_simple_paths", return_value=["any"])
     def test_shortest_paths(self, mock_shortest_simple_paths):
         """Test shortest paths."""
         source, dest = "00:00:00:00:00:00:00:01:1", "00:00:00:00:00:00:00:02:2"
         shortest_paths = self.kytos_graph.shortest_paths(source, dest)
 
-        mock_shortest_simple_paths.assert_called_with(self.kytos_graph.graph,
-                                                      source, dest, None)
+        mock_shortest_simple_paths.assert_called_with(
+            self.kytos_graph.graph, source, dest, None
+        )
         self.assertEqual(shortest_paths, ["any"])

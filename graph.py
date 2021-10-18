@@ -4,9 +4,9 @@ from kytos.core import log
 
 try:
     import networkx as nx
-    from networkx.exception import NodeNotFound, NetworkXNoPath
+    from networkx.exception import NetworkXNoPath, NodeNotFound
 except ImportError:
-    PACKAGE = 'networkx>=2.2'
+    PACKAGE = "networkx>=2.2"
     log.error(f"Package {PACKAGE} not found. Please 'pip install {PACKAGE}'")
 
 
@@ -67,16 +67,18 @@ class KytosGraph:
     @staticmethod
     def _remove_switch_hops(circuit):
         """Remove switch hops from a circuit hops list."""
-        for hop in circuit['hops']:
-            if len(hop.split(':')) == 8:
-                circuit['hops'].remove(hop)
+        for hop in circuit["hops"]:
+            if len(hop.split(":")) == 8:
+                circuit["hops"].remove(hop)
 
     def shortest_paths(self, source, destination, parameter=None):
         """Calculate the shortest paths and return them."""
         try:
-            paths = list(nx.shortest_simple_paths(self.graph,
-                                                  source,
-                                                  destination, parameter))
+            paths = list(
+                nx.shortest_simple_paths(
+                    self.graph, source, destination, parameter
+                )
+            )
         except (NodeNotFound, NetworkXNoPath):
             return []
         return paths

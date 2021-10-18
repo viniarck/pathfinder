@@ -3,7 +3,6 @@
 from flask import jsonify, request
 from kytos.core import KytosNApp, log, rest
 from kytos.core.helpers import listen_to
-
 # pylint: disable=import-error
 from napps.kytos.pathfinder.graph import KytosGraph
 
@@ -44,10 +43,11 @@ class Main(KytosNApp):
                     return []
 
                 for path in paths:
-                    head = path['hops'][:-1]
-                    tail = path['hops'][1:]
-                    if (((endpoint_a, endpoint_b) in zip(head, tail)) or
-                            ((endpoint_b, endpoint_a) in zip(head, tail))):
+                    head = path["hops"][:-1]
+                    tail = path["hops"][1:]
+                    if ((endpoint_a, endpoint_b) in zip(head, tail)) or (
+                        (endpoint_b, endpoint_a) in zip(head, tail)
+                    ):
                         filtered_paths.append(path)
         else:
             filtered_paths = paths
@@ -61,43 +61,44 @@ class Main(KytosNApp):
                     continue
 
                 for path in paths:
-                    head = path['hops'][:-1]
-                    tail = path['hops'][1:]
-                    if (((endpoint_a, endpoint_b) in zip(head, tail)) or
-                            ((endpoint_b, endpoint_a) in zip(head, tail))):
+                    head = path["hops"][:-1]
+                    tail = path["hops"][1:]
+                    if ((endpoint_a, endpoint_b) in zip(head, tail)) or (
+                        (endpoint_b, endpoint_a) in zip(head, tail)
+                    ):
 
                         filtered_paths.remove(path)
 
         return filtered_paths
 
-    @rest('v2/', methods=['POST'])
+    @rest("v2/", methods=["POST"])
     def shortest_path(self):
         """Calculate the best path between the source and destination."""
         data = request.get_json()
 
-        desired = data.get('desired_links')
-        undesired = data.get('undesired_links')
-        parameter = data.get('parameter')
+        desired = data.get("desired_links")
+        undesired = data.get("undesired_links")
+        parameter = data.get("parameter")
 
         paths = []
-        for path in self.graph.shortest_paths(data['source'],
-                                              data['destination'],
-                                              parameter):
+        for path in self.graph.shortest_paths(
+            data["source"], data["destination"], parameter
+        ):
 
-            paths.append({'hops': path})
+            paths.append({"hops": path})
 
         paths = self._filter_paths(paths, desired, undesired)
-        return jsonify({'paths': paths})
+        return jsonify({"paths": paths})
 
-    @listen_to('kytos.topology.updated')
+    @listen_to("kytos.topology.updated")
     def update_topology(self, event):
         """Update the graph when the network topology was updated.
 
         Clear the current graph and create a new with the most topoly updated.
         """
-        if 'topology' not in event.content:
+        if "topology" not in event.content:
             return
-        topology = event.content['topology']
+        topology = event.content["topology"]
         self._topology = topology
         self.graph.update_topology(topology)
-        log.debug('Topology graph updated.')
+        log.debug("Topology graph updated.")
