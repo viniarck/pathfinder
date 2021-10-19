@@ -71,6 +71,12 @@
             </div>
           </div>
           <k-input icon="arrow-right" :value.sync="metrics.ownership"></k-input>
+
+          <div class="dropdown">
+            <k-dropdown title="SPF Attribute" :options="get_spf_attribute_options" 
+            :value.sync="spf_attribute"></k-dropdown>
+          </div>
+
           <div>
             <k-input icon="arrow-right" placeholder="Minimum flexible hits"
             :action="function (val) {minimum_flexible_hits = parseInt(val)}"></k-input>
@@ -112,7 +118,8 @@ module.exports = {
                "undesired_links": self.undesired_links,
                "mandatory_metrics": mandatory_metrics,
                "flexible_metrics": flexible_metrics,
-               "spf_max_paths": 2,
+               "spf_attribute": self.spf_attribute,
+               "spf_max_paths": self.spf_max_paths,
                "minimum_flexible_hits": self.minimum_flexible_hits,
                }),
 
@@ -142,7 +149,6 @@ module.exports = {
 
     },
     show() {
-       console.log(JSON.stringify(this.paths))
        var content = {
                       "component": 'kytos-pathfinder-k-info-panel-best_path',
                       "content": this.paths,
@@ -165,6 +171,7 @@ module.exports = {
       var utilization_options = []
       var priority_options = []
       var ownership_options = []
+      var spf_attribute_options = []
 
       bandwidth_options.push({value: false, description: 'Bandwidth', selected: true});
       bandwidth_options.push({value: true, description: 'Bandwidth (Flexible)'});
@@ -232,6 +239,13 @@ module.exports = {
       });
 
       return links;
+    },
+    get_spf_attribute_options(){
+      return [
+        {value: "hop", description: "hop", selected: true},
+        {value: "delay", description: "delay"},
+        {value: "priority", description: "priority"}
+      ];
     }
   },
 
@@ -265,6 +279,8 @@ module.exports = {
         priority: false,
         ownership: false
       },
+      spf_attribute: "hop",
+      spf_max_paths: 2,
       minimum_flexible_hits: null
     }
   }
