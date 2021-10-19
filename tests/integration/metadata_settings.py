@@ -61,49 +61,90 @@ class MetadataSettings(TestPaths):
         TestPaths.add_metadata_to_link(
             "User1:1",
             "S2:1",
-            {"reliability": 3, "ownership": "B", "delay": 30, "bandwidth": 20},
+            {
+                "reliability": 3,
+                "ownership": {
+                    "B": {"max_utilization": 50},
+                    "C": {"max_utilization": 50},
+                },
+                "delay": 30,
+                "bandwidth": 20,
+            },
             links,
         )
 
         TestPaths.add_metadata_to_link(
             "User1:2",
             "S5:1",
-            {"reliability": 1, "ownership": "A", "delay": 5, "bandwidth": 50},
+            {
+                "reliability": 1,
+                "ownership": {"A": {}},
+                "delay": 5,
+                "bandwidth": 50,
+            },
             links,
         )
 
         TestPaths.add_metadata_to_link(
             "User1:3",
             "S4:1",
-            {"reliability": 3, "ownership": "A", "delay": 60, "bandwidth": 10},
+            {
+                "reliability": 3,
+                "ownership": {"A": {}},
+                "delay": 60,
+                "bandwidth": 10,
+            },
             links,
         )
 
         TestPaths.add_metadata_to_link(
             "S2:2",
             "User2:1",
-            {"reliability": 3, "ownership": "B", "delay": 30, "bandwidth": 20},
+            {
+                "reliability": 3,
+                "ownership": {
+                    "B": {"max_utilization": 50},
+                    "C": {"max_utilization": 50},
+                },
+                "delay": 30,
+                "bandwidth": 20,
+            },
             links,
         )
 
         TestPaths.add_metadata_to_link(
             "User2:2",
             "S4:2",
-            {"reliability": 3, "ownership": "B", "delay": 30, "bandwidth": 10},
+            {
+                "reliability": 3,
+                "ownership": {"B": {}},
+                "delay": 30,
+                "bandwidth": 10,
+            },
             links,
         )
 
         TestPaths.add_metadata_to_link(
             "S5:2",
             "S4:3",
-            {"reliability": 1, "ownership": "A", "delay": 10, "bandwidth": 50},
+            {
+                "reliability": 1,
+                "ownership": {"A": {}},
+                "delay": 10,
+                "bandwidth": 50,
+            },
             links,
         )
 
         TestPaths.add_metadata_to_link(
             "User2:3",
             "S4:4",
-            {"reliability": 3, "ownership": "A", "delay": 29, "bandwidth": 20},
+            {
+                "reliability": 3,
+                "ownership": {"A": {}},
+                "delay": 29,
+                "bandwidth": 20,
+            },
             links,
         )
 
@@ -164,28 +205,48 @@ class MetadataSettings(TestPaths):
         TestPaths.add_metadata_to_link(
             "User1:1",
             "S1:1",
-            {"reliability": 3, "ownership": "B", "delay": 30, "bandwidth": 20},
+            {
+                "reliability": 3,
+                "ownership": {"B": {}},
+                "delay": 30,
+                "bandwidth": 20,
+            },
             links,
         )
 
         TestPaths.add_metadata_to_link(
             "User1:2",
             "S3:1",
-            {"reliability": 1, "ownership": "A", "delay": 5, "bandwidth": 50},
+            {
+                "reliability": 1,
+                "ownership": {"A": {}},
+                "delay": 5,
+                "bandwidth": 50,
+            },
             links,
         )
 
         TestPaths.add_metadata_to_link(
             "User2:1",
             "S2:1",
-            {"reliability": 3, "ownership": "A", "delay": 60, "bandwidth": 10},
+            {
+                "reliability": 3,
+                "ownership": {"A": {}},
+                "delay": 60,
+                "bandwidth": 10,
+            },
             links,
         )
 
         TestPaths.add_metadata_to_link(
             "User3:1",
             "S3:2",
-            {"reliability": 3, "ownership": "B", "delay": 30, "bandwidth": 20},
+            {
+                "reliability": 3,
+                "ownership": {"B": {}},
+                "delay": 30,
+                "bandwidth": 20,
+            },
             links,
         )
 
@@ -212,7 +273,7 @@ class MetadataSettings(TestPaths):
         TestPaths.add_metadata_to_link(
             "User1:1",
             "S2:1",
-            {"reliability": 3, "ownership": "B", "bandwidth": 20},
+            {"reliability": 3, "ownership": {"B": {}}, "bandwidth": 20},
             links,
         )
 
@@ -226,7 +287,7 @@ class MetadataSettings(TestPaths):
         TestPaths.add_metadata_to_link(
             "User1:3",
             "S4:1",
-            {"ownership": "A", "delay": 60, "bandwidth": 10},
+            {"ownership": {"A": {}}, "delay": 60, "bandwidth": 10},
             links,
         )
 
@@ -235,7 +296,7 @@ class MetadataSettings(TestPaths):
         )
 
         TestPaths.add_metadata_to_link(
-            "User2:2", "S4:2", {"ownership": "B", "bandwidth": 10}, links
+            "User2:2", "S4:2", {"ownership": {"B": {}}, "bandwidth": 10}, links
         )
 
         TestPaths.add_metadata_to_link(

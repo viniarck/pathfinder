@@ -1,5 +1,4 @@
 """Module to overwrite all the needed methods"""
-from itertools import combinations
 
 # Core modules to import
 from kytos.core.link import Link
@@ -273,33 +272,3 @@ class EdgesSettings(TestPaths):
         links["User1:4<->User4:3"] = Link(
             interfaces["User1:4"], interfaces["User4:3"]
         )
-
-    def paths_between_all_users(
-        self, item, mandatory_metrics=None, flexible_metrics=None, metrics=None
-    ):
-        """Method to verify the existence of a path between
-        a set of points given different constrains"""
-        combos = combinations(["User1", "User2", "User3", "User4"], 2)
-        self.initializer()
-        mandatory_metrics = mandatory_metrics or {}
-        flexible_metrics = flexible_metrics or {}
-
-        valid = True
-        for source, destination in combos:
-            paths = self.graph.constrained_k_shortest_paths(
-                source,
-                destination,
-                mandatory_metrics=mandatory_metrics,
-                flexible_metrics=flexible_metrics,
-            )
-            for path in paths:
-                if metrics is not None:
-                    if metrics in path["metrics"]:
-                        for path in path["hops"]:
-                            if item in path:
-                                valid = False
-                else:
-                    for path in path["hops"]:
-                        if item in path:
-                            valid = False
-        return valid

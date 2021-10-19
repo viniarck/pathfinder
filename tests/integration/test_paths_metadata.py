@@ -54,75 +54,111 @@ class TestPathsMetadata(MetadataSettings):
             assert path["hops"][0] == source
             assert path["hops"][-1] == destination
 
-    def test_path_constrained_user_user(self):
-        """Test if there is a constrained
-        path between User - User."""
-        self.initializer()
-        paths = self.graph.constrained_k_shortest_paths("User1", "User2")
-        self.assertNotEqual(paths, [], True)
-
     def test_path_constrained_user_switch(self):
         """Test if there is a constrained
         path between User - Switch."""
         self.initializer()
-        paths = self.graph.constrained_k_shortest_paths("User1", "S4")
-        self.assertNotEqual(paths, [], True)
+
+        source = "User1"
+        destination = "S4"
+        paths = self.graph.constrained_k_shortest_paths(source, destination)
+        assert paths
+
+        for path in paths:
+            assert path["hops"][0] == source
+            assert path["hops"][-1] == destination
 
     def test_path_constrained_switch_switch(self):
         """Test if there is a constrained
         path between Switch - Switch."""
         self.initializer()
-        paths = self.graph.constrained_k_shortest_paths("S2", "S4")
-        self.assertNotEqual(paths, [], True)
+
+        source = "S2"
+        destination = "S4"
+        paths = self.graph.constrained_k_shortest_paths(source, destination)
+        assert paths
+
+        for path in paths:
+            assert path["hops"][0] == source
+            assert path["hops"][-1] == destination
 
     def test_no_path_constrained_user_user(self):
         """Test if there is NOT a constrained
         path between User - User."""
         self.initializer()
         paths = self.graph.constrained_k_shortest_paths("User1", "User3")
-        self.assertEqual(paths, [], True)
+        assert not paths
 
     def test_path_constrained_user_user_t1(self):
         """Test if there is a constrained path between
         User - User using the 2nd topology variant."""
         self.initializer(val=1)
-        paths = self.graph.constrained_k_shortest_paths("User1", "User3")
-        self.assertNotEqual(paths, [], True)
+
+        source = "User1"
+        destination = "User3"
+        paths = self.graph.constrained_k_shortest_paths(source, destination)
+        assert paths
+
+        for path in paths:
+            assert path["hops"][0] == source
+            assert path["hops"][-1] == destination
 
     def test_no_path_constrained_user_user_t1(self):
         """Test if there is NOT a constrained path between
         User - User using the 2nd topology variant."""
         self.initializer(val=1)
         paths = self.graph.constrained_k_shortest_paths("User1", "User2")
-        self.assertEqual(paths, [], True)
+        assert not paths
 
     def test_no_path_constrained_switch_switch_t1(self):
         """Test if there is NOT a constrained path between
         Switch - Switch using the 2nd topology variant."""
         self.initializer(val=1)
         paths = self.graph.constrained_k_shortest_paths("S1", "S2")
-        self.assertEqual(paths, [], True)
+        assert not paths
 
     def test_path_constrained_user_user_t2(self):
         """Test if there is a constrained path between
         User - User using the 3rd topology variant."""
         self.initializer(val=2)
-        paths = self.graph.constrained_k_shortest_paths("User1", "User2")
-        self.assertNotEqual(paths, [], True)
+
+        source = "User1"
+        destination = "User2"
+        paths = self.graph.constrained_k_shortest_paths(source, destination)
+        assert paths
+
+        for path in paths:
+            assert path["hops"][0] == source
+            assert path["hops"][-1] == destination
 
     def test_path_constrained_user_switch_t2(self):
         """Test if there is a constrained path between
         User - Switch using the 3rd topology variant."""
         self.initializer(val=2)
+
+        source = "User1"
+        destination = "S4"
+        paths = self.graph.constrained_k_shortest_paths(source, destination)
+        assert paths
+
+        for path in paths:
+            assert path["hops"][0] == source
+            assert path["hops"][-1] == destination
         paths = self.graph.constrained_k_shortest_paths("User1", "S4")
-        self.assertNotEqual(paths, [], True)
 
     def test_path_constrained_switch_switch_t2(self):
         """Test if there is a constrained path between
         two switches using the 3rd topology variant."""
         self.initializer(val=2)
-        paths = self.graph.constrained_k_shortest_paths("S2", "S4")
-        self.assertNotEqual(paths, [], True)
+
+        source = "S2"
+        destination = "S4"
+        paths = self.graph.constrained_k_shortest_paths(source, destination)
+        assert paths
+
+        for path in paths:
+            assert path["hops"][0] == source
+            assert path["hops"][-1] == destination
 
     def test_path_constrained_reliability(self):
         """Tests if the edges used in the paths
@@ -132,25 +168,51 @@ class TestPathsMetadata(MetadataSettings):
 
         self.initializer()
 
+        source = "User1"
+        destination = "User2"
         paths = self.graph.constrained_k_shortest_paths(
-            "User1", "User2", mandatory_metrics=requirements
+            source, destination, mandatory_metrics=requirements
         )
+        assert paths
 
-        self.assertNotEqual(paths, [])
+        for path in paths:
+            assert path["hops"][0] == source
+            assert path["hops"][-1] == destination
+
+    def test_cspf_with_multiple_owners(self):
+        """Tests if the edges with multiple owners"""
+
+        owners = ("B", "C")
+        owners_paths = []
+        for owner in owners:
+            requirements = {"ownership": owner}
+
+            self.initializer()
+
+            source = "User1"
+            destination = "User2"
+            paths = self.graph.constrained_k_shortest_paths(
+                source, destination, mandatory_metrics=requirements, k=1
+            )
+            assert paths
+            assert paths[0]["hops"][0] == source
+            assert paths[0]["hops"][-1] == destination
+            assert paths[0]["metrics"] == requirements
+            owners_paths.append(paths[0]["hops"])
+        assert owners_paths[0] == owners_paths[1]
 
     def test_no_path_constrained_reliability(self):
         """Tests if the edges used in the paths
         of the paths set do not have poor reliability
         """
-        requirements = {"reliability": 3}
+        requirements = {"reliability": 1}
 
         self.initializer()
 
         paths = self.graph.constrained_k_shortest_paths(
             "User1", "User3", mandatory_metrics=requirements
         )
-
-        self.assertEqual(paths, [])
+        assert not paths
 
     def test_path_constrained_reliability_detailed(self):
         """Tests if the edges used in the paths
