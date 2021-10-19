@@ -72,19 +72,31 @@
           </div>
           <k-input icon="arrow-right" :value.sync="metrics.ownership"></k-input>
 
-          <div class="dropdown">
-            <k-dropdown title="SPF Attribute" :options="get_spf_attribute_options" 
-            :value.sync="spf_attribute"></k-dropdown>
+          <div class="metric">
+            <div class="dropdown">
+              <k-dropdown title="SPF Attribute" :options="get_spf_attribute_options" 
+              :value.sync="spf_attribute"></k-dropdown>
+            </div>
           </div>
 
-          <div>
-            <k-input icon="arrow-right" placeholder="Minimum flexible hits"
-            :action="function (val) {minimum_flexible_hits = parseInt(val)}"></k-input>
+          <div class="metric">
+            <div>
+              <k-input icon="arrow-right" placeholder="SPF path maximum cost"
+              :action="function (val) {spf_max_path_cost = parseInt(val)}"></k-input>
+            </div>
           </div>
-          <div>
-           <k-button icon="search" title="Search" :on_click="get_paths">
-           </k-button>
-         </div>
+
+          <div class="metric">
+            <div>
+              <k-input icon="arrow-right" placeholder="Minimum flexible hits"
+              :action="function (val) {minimum_flexible_hits = parseInt(val)}"></k-input>
+            </div>
+          </div>
+
+           <div>
+             <k-button icon="search" title="Search" :on_click="get_paths">
+             </k-button>
+           </div>
 
         </k-accordion-item>
       <k-accordion>
@@ -120,6 +132,7 @@ module.exports = {
                "flexible_metrics": flexible_metrics,
                "spf_attribute": self.spf_attribute,
                "spf_max_paths": self.spf_max_paths,
+               "spf_max_path_cost": self.spf_max_path_cost,
                "minimum_flexible_hits": self.minimum_flexible_hits,
                }),
 
@@ -281,6 +294,7 @@ module.exports = {
       },
       spf_attribute: "hop",
       spf_max_paths: 2,
+      spf_max_path_cost: null,
       minimum_flexible_hits: null
     }
   }
