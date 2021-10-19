@@ -1,5 +1,7 @@
 """Main module of kytos/pathfinder Kytos Network Application."""
 
+from threading import Lock
+
 from flask import jsonify, request
 from kytos.core import KytosNApp, log, rest
 from kytos.core.helpers import listen_to
@@ -19,6 +21,7 @@ class Main(KytosNApp):
         """Create a graph to handle the nodes and edges."""
         self.graph = KytosGraph()
         self._topology = None
+        self._lock = Lock()
 
     def execute(self):
         """Do nothing."""
@@ -158,35 +161,39 @@ class Main(KytosNApp):
         mandatory_metrics = data.get("mandatory_metrics")
         flexible_metrics = data.get("flexible_metrics")
         minimum_hits = data.get("minimum_flexible_hits")
+        log.debug(f"POST v2/ payload data: {data}")
 
         try:
-            if any([mandatory_metrics, flexible_metrics]):
-                paths = self.graph.constrained_k_shortest_paths(
-                    data["source"],
-                    data["destination"],
-                    weight=self.graph._spf_edge_data_cbs[spf_attr],
-                    k=spf_max_paths,
-                    minimum_hits=minimum_hits,
-                    mandatory_metrics=mandatory_metrics,
-                    flexible_metrics=flexible_metrics,
+            with self._lock:
+                if any([mandatory_metrics, flexible_metrics]):
+                    paths = self.graph.constrained_k_shortest_paths(
+                        data["source"],
+                        data["destination"],
+                        weight=self.graph._spf_edge_data_cbs[spf_attr],
+                        k=spf_max_paths,
+                        minimum_hits=minimum_hits,
+                        mandatory_metrics=mandatory_metrics,
+                        flexible_metrics=flexible_metrics,
+                    )
+                else:
+                    paths = self.graph.k_shortest_paths(
+                        data["source"],
+                        data["destination"],
+                        weight=self.graph._spf_edge_data_cbs[spf_attr],
+                        k=spf_max_paths,
+                    )
+
+                paths = self.graph._path_cost_builder(
+                    paths,
+                    weight=spf_attr,
                 )
-            else:
-                paths = self.graph.k_shortest_paths(
-                    data["source"],
-                    data["destination"],
-                    weight=self.graph._spf_edge_data_cbs[spf_attr],
-                    k=spf_max_paths,
-                )
+            log.debug(f"Found paths: {paths}")
         except TypeError as err:
             raise BadRequest(str(err))
 
-        paths = self.graph._path_cost_builder(
-            paths,
-            weight=spf_attr,
-        )
-
         paths = self._filter_paths(paths, desired, undesired)
         paths = self._filter_paths_le_cost(paths, max_cost=spf_max_path_cost)
+        log.debug(f"Filtered paths: {paths}")
         return jsonify({"paths": paths})
 
     @listen_to("kytos.topology.updated")
@@ -196,8 +203,9 @@ class Main(KytosNApp):
             return
         try:
             topology = event.content["topology"]
-            self._topology = topology
-            self.graph.update_topology(topology)
+            with self._lock:
+                self._topology = topology
+                self.graph.update_topology(topology)
             log.debug("Topology graph updated.")
         except TypeError as err:
             log.debug(err)
