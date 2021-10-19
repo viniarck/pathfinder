@@ -73,6 +73,13 @@
           <k-input icon="arrow-right" :value.sync="metrics.ownership"></k-input>
 
           <div class="metric">
+            <div>
+              <k-input icon="arrow-right" placeholder="Minimum flexible hits"
+              :action="function (val) {minimum_flexible_hits = parseInt(val)}"></k-input>
+            </div>
+          </div>
+
+          <div class="metric">
             <div class="dropdown">
               <k-dropdown title="SPF Attribute" :options="get_spf_attribute_options" 
               :value.sync="spf_attribute"></k-dropdown>
@@ -83,13 +90,6 @@
             <div>
               <k-input icon="arrow-right" placeholder="SPF path maximum cost"
               :action="function (val) {spf_max_path_cost = parseInt(val)}"></k-input>
-            </div>
-          </div>
-
-          <div class="metric">
-            <div>
-              <k-input icon="arrow-right" placeholder="Minimum flexible hits"
-              :action="function (val) {minimum_flexible_hits = parseInt(val)}"></k-input>
             </div>
           </div>
 
