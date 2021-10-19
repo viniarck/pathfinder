@@ -2,7 +2,7 @@
   <k-toolbar-item icon="compass" tooltip="Napp Pathfinder">
     <div class="scroll">
       <k-accordion>
-        <k-accordion-item title="Best Path">
+        <k-accordion-item title="Best Paths">
          <k-dropdown icon="circle-o" title="Source:" :options="get_interfaces"
           :value.sync="source"></k-dropdown>
          <k-dropdown icon="circle-o" title="Destination:" :options="get_interfaces"
@@ -11,25 +11,6 @@
           :value.sync ="desired_links"></k-select>
          <k-select icon="link" title="Undesired links:" :options="get_links"
           :value.sync ="undesired_links"></k-select>
-         <k-button icon="search" title="Search" :on_click="get_paths">
-         </k-button>
-        </k-accordion-item>
-
-        <k-accordion-item title="Path with Exact Delay">
-         <k-dropdown icon="circle-o" title="Source:" :options="get_interfaces"
-          :value.sync="source"></k-dropdown>
-         <k-dropdown icon="circle-o" title="Destination:" :options="get_interfaces"
-          :value.sync ="destination"></k-dropdown>
-         <k-slider icon="adjust" :action="function(val) {path_delay = parseInt(val)}" max=1000></k-slider>
-         <k-button icon="search" title="Search" :on_click="get_path_exact_delay">
-         </k-button>
-        </k-accordion-item>
-
-        <k-accordion-item title="Best Constrained Path">
-           <k-dropdown icon="circle-o" title="Source:" :options="get_interfaces"
-            :value.sync="source_constrained"></k-dropdown>
-           <k-dropdown icon="circle-o" title="Destination:" :options="get_interfaces"
-            :value.sync ="destination_constrained"></k-dropdown>
           <div class="metric">
             <div class="checkbox">
               <k-checkbox :model.sync = "checked_list" :value = "'bandwidth'"></k-checkbox>
@@ -95,8 +76,9 @@
           </div>
           <k-slider :max = 6
           :action="function (val) {minimum_flexible_hits = parseInt(val)}"></k-slider>
-          <k-button icon="search" title="Search" :on_click="get_constrained_paths">
-          </k-button>
+         <k-button icon="search" title="Search" :on_click="get_paths">
+         </k-button>
+
         </k-accordion-item>
       <k-accordion>
     </div>
@@ -108,6 +90,16 @@ module.exports = {
   methods: {
     get_paths (){
       var self = this
+      var mandatory_metrics = {}
+      var flexible_metrics = {}
+      for(var checked of self.checked_list) {
+        if (self.is_flexible[checked]) {
+          flexible_metrics[checked] = self.metrics[checked]
+        } else {
+          mandatory_metrics[checked] = self.metrics[checked]
+        }
+      }
+
       $.ajax({
         async: true,
         dataType: "json",
@@ -116,72 +108,16 @@ module.exports = {
         data: JSON.stringify({"source": self.source,
                "destination": self.destination,
                "desired_links": self.desired_links,
-               "undesired_links": self.undesired_links
+               "undesired_links": self.undesired_links,
+               "flexible_metrics": flexible_metrics,
+               "spf_max_paths": 2,
+               "minimum_flexible_hits": self.minimum_flexible_hits,
                }),
 
         url: this.$kytos_server_api + "kytos/pathfinder/v2",
         success: function(data) {
             if (data['paths'][0] !== undefined){
-                self.paths = data['paths'][0].hops;
-            } else {
-                self.paths = []
-            }
-          self.show();
-        }
-      });
-    },
-    get_path_exact_delay (){
-      var self = this
-      
-      $.ajax({
-        async: true,
-        dataType: "json",
-        type: "POST",
-        contentType: "application/json",
-        data: JSON.stringify({"source": self.source,
-               "destination": self.destination,
-               "delay": self.path_delay
-               }),
-
-        url: this.$kytos_server_api + "kytos/pathfinder/v2/path-exact-delay",
-        success: function(data) {
-            if (data['Exact Path Result'] !== undefined){
-                self.paths = data['Exact Path Result'];
-            } else {
-                self.paths = []
-            }
-            self.show_exact_delay_path();
-        }
-      });
-    },
-    get_constrained_paths(){
-      var self = this
-      var base_metrics = {}
-      var flexible_metrics = {}
-      for(var checked of self.checked_list) {
-        if (self.is_flexible[checked]) {
-          flexible_metrics[checked] = self.metrics[checked]
-        } else {
-          base_metrics[checked] = self.metrics[checked]
-        }
-      }
-      
-      $.ajax({
-        async: true,
-        dataType: "json",
-        type: "POST",
-        contentType: "application/json",
-        data: JSON.stringify({"source": self.source_constrained,
-               "destination": self.destination_constrained,
-               "base_metrics": base_metrics,
-               "flexible_metrics": flexible_metrics,
-               "minimum_flexible_hits": self.minimum_flexible_hits
-               }),
-
-        url: this.$kytos_server_api + "kytos/pathfinder/v2/best-constrained-paths",
-        success: function(data) {
-            if (data[0] !== undefined){
-                self.paths = data[0]['paths'][0];
+                self.paths = data['paths'];
             } else {
                 self.paths = []
             }
@@ -204,23 +140,13 @@ module.exports = {
 
     },
     show() {
+       console.log(JSON.stringify(this.paths))
        var content = {
                       "component": 'kytos-pathfinder-k-info-panel-best_path',
                       "content": this.paths,
                       "icon": "compass",
-                      "title": "Best Path",
+                      "title": "Best Paths",
                       "subtitle": "by kytos/pathfinder"
-                     }
-       this.$kytos.$emit("showInfoPanel", content)
-
-   },
-   show_exact_delay_path() {
-       var content = {
-                      "component": 'kytos-pathfinder-k-info-panel-exact_delay_path',
-                      "content": this.paths,
-                      "icon": "compass",
-                      "title": "Best Path?",
-                      "subtitle": "by AmLight FIU"
                      }
        this.$kytos.$emit("showInfoPanel", content)
 
@@ -320,8 +246,6 @@ module.exports = {
       destination: "",
       desired_links: [],
       undesired_links: [],
-      source_constrained: "",
-      destination_constrained: "",
       checked_list: [],
       metrics:{
         bandwidth: 0,

@@ -1,10 +1,11 @@
 <template>
     <k-accordion>
-      <k-accordion-item title="Best Path">
-          <k-property-panel>
-            <k-property-panel-item v-for="(path, index) in content"
-                                   v-if="content" :name="String(index)" :value="path"
-                                   :key="index">
+      <k-accordion-item title="Best Paths">
+          <k-property-panel v-for="(path, index) in content">
+            <div>Path {{index}}, cost: {{path['cost']}}, hops:</div>
+            <k-property-panel-item v-for="(cur_path, path_index) in path['hops']"
+                                   v-if="content" :name="String(path_index)" :value="cur_path"
+                                   :key="path_index">
             </k-property-panel-item>
           </k-property-panel>
         </k-accordion-item>
