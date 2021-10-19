@@ -23,6 +23,41 @@ Fixed
 Security
 ========
 
+[2.3.0] - 2021-10-19
+********************
+
+Changed
+=======
+- Changed ``setup.py`` run both unit and integration tests.
+- Bumped ``networkx to 2.5.1`` to support ``spf_attribute``.
+- Augmented shortest paths to compute lazily what is needed.
+- Updated ``openapi.yml`` spec accordingly to EP23-2
+- ``POST v2/`` JSON response now includes both ``cost`` and ``metrics`` attributes, in addition to the ``hops`` attribute.
+- Added a basic validation support for the API until full spec validation is implemented.
+
+Added
+=====
+- Implemented support for EP23-2, without breaking changes in the ``v2`` API.
+- Added support for both ``mandatory_metrics`` and ``flexible_metrics`` to find constrained best paths based on user-specified network metric constraints.
+- Added support for ``spf_attribute`` in the API .
+- Added support for ``spf_max_paths`` in the API.
+- Added support for ``spf_max_path_cost`` in the API.
+- Added new UI filtering components accordingly.
+- Updated the UI to also support listing multiple best paths in the accordion list.
+
+
+[2.2.4] - 2021-05-27
+********************
+
+Changed
+=======
+- Changed ``setup.py`` to alert when a test fails on Travis.
+- Updated ``requirements/dev.txt`` file.
+
+Fixed
+=====
+- Fixed a bug in parsing metadata of links (fix #64).
+
 
 [2.2.3] - 2020-07-24
 ********************
@@ -37,47 +72,12 @@ Changed
 =======
 - Improved documentation about NApp dependencies.
 - Changed tests structure to separate unit and integration tests.
-- Updated Pathfinder UI with a best constrained flexible paths search menu.
-- Removed changelog update
-=======
 
 Fixed
 =====
 - Fixed package install when creating symlinks.
 - Fixed hops addresses in openapi.yml.
 - Updated ``run.in`` to include ``networkx`` dependency
-
-
-[2.2.2] - 2020-03-11
-********************
-Added
-=====
-- Log error message when networkx package isn't installed.
-- Updated __init__.py file in tests folder to solve bug when running tests.
-
-Fixed
-=====
-- Fixed Scrutinizer coverage error.
-- Fixed some linter issues.
-
-
-Added
-=====
-
-Changed
-=======
-
-Deprecated
-==========
-
-Removed
-=======
-
-Fixed
-=====
-
-Security
-========
 
 
 [2.2.2] - 2020-03-11
