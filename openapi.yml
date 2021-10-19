@@ -36,7 +36,7 @@ paths:
 
         In addition, this API also exposes general SPF configuration options that you could leverage:\n
 
-            - Link medata attribute that will be used as link cost by SPF\n
+            - Link metadata attribute that will be used as link cost by SPF\n
             - Maximum number of best paths to be computed\n
             - Maximum accumulated path cost to be consireded a best path\n"
 
@@ -76,7 +76,7 @@ paths:
                     - "a3723e31-bdd3-4102-8b1a-c9fbde6d301a"
                 spf_attribute:
                   type: string
-                  description: Link medata attribute that will be used as link cost by SPF.
+                  description: Link metadata attribute that will be used as link cost by SPF.
                   default: "hop"
                   enum: 
                     - "hop"
@@ -116,7 +116,7 @@ paths:
                 parameter:
                   type: string
                   example: "hop"
-                  description: "Link medata attribute that will be used as link cost by SPF. Please use spf_attribute instead, this parameter will be deprecated in the future."
+                  description: "Link metadata attribute that will be used as link cost by SPF. Please use spf_attribute instead, this parameter will be deprecated in the future."
               required:
                 - source
                 - destination
